@@ -3,7 +3,6 @@ package ChessObjects.PieceTypes;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.example.AppTest;
 
 
 public class TeamTest extends TestCase{
@@ -13,7 +12,7 @@ public class TeamTest extends TestCase{
     }
 
     public static Test suite(){
-        return new TestSuite(AppTest.class);
+        return new TestSuite(TeamTest.class);
     }
 
     //Testing if the teams are considered opposite
