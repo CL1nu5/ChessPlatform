@@ -1,4 +1,7 @@
 package ChessObjects;
 
-public class Piece {
+import java.awt.*;
+
+public abstract class Piece {
+    protected Point currentPosition;
 }
