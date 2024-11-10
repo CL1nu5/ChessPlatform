@@ -16,6 +16,12 @@ public class Board {
         activePlayer = Team.White; //white always starts the game
     }
 
+    /* execution methods */
+    public void execute(Move move){
+        previousMoves.add(move);
+        move.execute();
+    }
+
     /* methods to get all moves in a position */
     //getting every confirmed move of a team
     public ArrayList<Move> getMoves(){

@@ -7,10 +7,10 @@ import org.apache.logging.log4j.core.Logger;
 import java.awt.*;
 
 public class Move {
-    private final Piece movingPiece, capturedPiece;
-    private final Point previousPosition, postponedPosition;
-    private final Move connectedMove;
-    private final Board board;
+    public final Piece movingPiece, capturedPiece;
+    public final Point previousPosition, postponedPosition;
+    public final Move connectedMove;
+    public final Board board;
 
     private static final Logger logger = (Logger) LogManager.getLogger(Move.class);
 
