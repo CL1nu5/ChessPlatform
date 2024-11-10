@@ -4,7 +4,6 @@ import ChessObjects.PieceTypes.Team;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public abstract class Piece {
     protected Point currentPosition;
