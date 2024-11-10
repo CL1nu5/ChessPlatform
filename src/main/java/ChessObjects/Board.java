@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Board {
     public Piece [][] pieces;
-    private ArrayList<Move> previousMoves;
+    private final ArrayList<Move> previousMoves;
 
     public Board(){
         pieces = new Piece[8][8]; //8*8 = chess board size -> [y][x]
@@ -19,7 +19,7 @@ public class Board {
 
     public boolean isOccupied(Point position){
         if (!isInsideBoard(position)){
-            return false;
+            return true; //outside field = occupied
         }
 
         return pieces[position.y][position.x] != null;

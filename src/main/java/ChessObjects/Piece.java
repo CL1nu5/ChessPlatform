@@ -1,14 +1,28 @@
 package ChessObjects;
 
+import ChessObjects.PieceTypes.Team;
+
 import java.awt.*;
+import java.util.ArrayList;
 
 public abstract class Piece {
     protected Point currentPosition;
-    private final Board board;
+    protected final Board board;
+    protected Team team;
 
-    Piece(Point startingPosition, Board board){
+    public Piece(Point startingPosition, Team team, Board board){
         this.currentPosition = startingPosition;
+        this.team = team;
         this.board = board;
+    }
+
+    public boolean placeOnBoard(){
+        if (board.isOccupied(currentPosition)){
+            return false;
+        }
+
+        board.pieces[currentPosition.y][currentPosition.x] = this;
+        return true;
     }
 
     public boolean setPosition(Point newPosition){
@@ -25,4 +39,5 @@ public abstract class Piece {
         return true;
     }
 
+    public abstract ArrayList<Move> getPossibleMoves();
 }
