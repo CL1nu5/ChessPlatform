@@ -16,22 +16,45 @@ public class Board {
         activePlayer = Team.White; //white always starts the game
     }
 
+    /* methods to get all moves in a position */
     //getting every confirmed move of a team
     public ArrayList<Move> getMoves(){
         ArrayList<Move> moves = new ArrayList<>();
 
         for (Piece [] row : pieces){
+            for (Piece piece: row){
 
+                //there has to be a piece on the field, and it needs to be in the active team
+                if (piece != null && piece.team.isEqual(activePlayer)){
+                    moves.addAll(piece.getMoves());
+                }
+            }
         }
 
         return moves;
     }
 
     //getting every non-confirmed move of a team
+    public ArrayList<Move> getPossibleMoves(){
+        ArrayList<Move> moves = new ArrayList<>();
 
+        for (Piece [] row : pieces) {
+            for (Piece piece : row) {
+
+                //there has to be a piece on the field, and it needs to be in the active team
+                if (piece != null && piece.team.isEqual(activePlayer)){
+                    moves.addAll(piece.getPossibleMoves());
+                }
+            }
+        }
+
+        return moves;
+    }
+
+    /* support methods */
     //switching the active team
     public void switchTeam(){
-        if (activePlayer.isAlly(Team.White))
+        if (activePlayer.isEqual(Team.White))
             activePlayer = Team.Black;
 
         else

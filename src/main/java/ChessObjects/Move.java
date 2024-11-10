@@ -1,5 +1,6 @@
 package ChessObjects;
 
+import ChessObjects.Pieces.King;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 
@@ -28,17 +29,26 @@ public class Move {
         this(movingPiece, null, postponedPosition, null, board);
     }
 
+    /* capture methods */
     //checks if a piece was captured by this move
     public boolean isCaptureMove(){
         return capturedPiece != null;
     }
 
+    public boolean isKingCaptured(){
+        if(! isCaptureMove()){
+            return false;
+        }
+        return capturedPiece instanceof King;
+    }
+
+    /* updating moves */
     public void execute(){
         //if there are no more connected moves the team should be switched back
         if (connectedMove == null){
             board.switchTeam();
         }
-        
+
         removeCapturedPiece();
 
         if(!movingPiece.setPosition(postponedPosition)){
@@ -47,7 +57,6 @@ public class Move {
 
         if (connectedMove != null){
             connectedMove.execute();
-            return;
         }
     }
 

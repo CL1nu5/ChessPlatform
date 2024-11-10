@@ -38,9 +38,30 @@ public abstract class Piece {
         this.currentPosition = newPosition;
         return true;
     }
-    public void getMoves(){
 
+    //confirmed Moves
+    public ArrayList<Move> getMoves(){
+        ArrayList<Move> moves = getPossibleMoves();
+
+        for (int i = 0; i < moves.size(); i++){
+            Move move = moves.get(i);
+
+            move.execute();
+
+            ArrayList<Move> counterMoves = board.getPossibleMoves();
+            //check if any counter move captures the king -> non-legal move
+            for (Move counterMove : counterMoves){
+                if (counterMove.isKingCaptured()){
+                    moves.remove(i);
+                    i--;
+                    break;
+                }
+            }
+        }
+
+        return moves;
     }
 
+    //non confirmed Moves
     public abstract ArrayList<Move> getPossibleMoves();
 }
