@@ -18,6 +18,16 @@ public class BoardTest extends TestCase {
         return new TestSuite(BoardTest.class);
     }
 
+    //tests if switching the Team works
+    public void testSwitchTeam() {
+        Board board = new Board();
+        assertSame(board.activePlayer, Team.White);
+
+        board.switchTeam();
+
+        assertNotSame(board.activePlayer, Team.White);
+    }
+
     //tests if positions in and outside the field are correctly classified as in and outside
     public void testIsInsideBoard(){
         Board board = new Board();
