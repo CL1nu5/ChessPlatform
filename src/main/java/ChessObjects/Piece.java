@@ -38,6 +38,9 @@ public abstract class Piece {
         this.currentPosition = newPosition;
         return true;
     }
+    public void getMoves(){
+
+    }
 
     public abstract ArrayList<Move> getPossibleMoves();
 }

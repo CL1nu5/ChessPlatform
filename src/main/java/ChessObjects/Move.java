@@ -34,6 +34,11 @@ public class Move {
     }
 
     public void execute(){
+        //if there are no more connected moves the team should be switched back
+        if (connectedMove == null){
+            board.switchTeam();
+        }
+        
         removeCapturedPiece();
 
         if(!movingPiece.setPosition(postponedPosition)){
@@ -42,6 +47,7 @@ public class Move {
 
         if (connectedMove != null){
             connectedMove.execute();
+            return;
         }
     }
 
@@ -55,6 +61,11 @@ public class Move {
         }
 
         addCapturedPiece();
+
+        //if there are no more connected moves the team should be switched back
+        if (connectedMove == null){
+            board.switchTeam();
+        }
     }
 
     //execution methods
