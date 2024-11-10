@@ -10,12 +10,19 @@ public abstract class Piece {
     protected final Board board;
     protected Team team;
 
-    Piece(Point startingPosition, Team team, Board board){
+    public Piece(Point startingPosition, Team team, Board board){
         this.currentPosition = startingPosition;
         this.team = team;
         this.board = board;
+    }
 
-        setPosition(currentPosition);
+    public boolean placeOnBoard(){
+        if (board.isOccupied(currentPosition)){
+            return false;
+        }
+
+        board.pieces[currentPosition.y][currentPosition.x] = this;
+        return true;
     }
 
     public boolean setPosition(Point newPosition){
