@@ -16,14 +16,19 @@ public class TeamTest extends TestCase{
     }
 
     //Testing if the teams are considered opposite
-    public void testTeamsOpposite(){
+    public void testTeamsOpposite1(){
         Team team1 = Team.White, team2 = Team.Black;
-        assertFalse(team1.equals(team2));
+        assertFalse(team1.isAlly(team2));
+    }
+
+    public void testTeamsOpposite2(){
+        Team team1 = Team.White, team2 = Team.Black;
+        assertTrue(team1.isEnemy(team2));
     }
 
     //Testing if the teams are considered Equal
     public void testTeamsEqual(){
         Team team1 = Team.White;
-        assertTrue(team1.equals(Team.White));
+        assertTrue(team1.isAlly(Team.White));
     }
 }

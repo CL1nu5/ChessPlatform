@@ -11,7 +11,11 @@ public enum Team {
         this.value = value;
     }
 
-    public boolean equals(Team that){
+    public boolean isAlly(Team that){
         return this == that;
+    }
+
+    public boolean isEnemy(Team that){
+        return this != that;
     }
 }
