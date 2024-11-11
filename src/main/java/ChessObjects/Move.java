@@ -1,10 +1,9 @@
 package ChessObjects;
 
 import ChessObjects.Pieces.King;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Logger;
 
 import java.awt.*;
+import java.util.logging.Logger;
 
 public class Move {
     public final Piece movingPiece, capturedPiece;
@@ -12,7 +11,7 @@ public class Move {
     public final Move connectedMove;
     public final Board board;
 
-    private static final Logger logger = (Logger) LogManager.getLogger(Move.class);
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     //general constructor
     public Move(Piece movingPiece, Piece capturedPiece, Point postponedPosition, Move connectedMove, Board board) {
@@ -52,7 +51,7 @@ public class Move {
         removeCapturedPiece();
 
         if(!movingPiece.setPosition(postponedPosition)){
-            logger.error("execute - position update not possible");
+            logger.warning("execute - position update not possible");
         }
 
         if (connectedMove != null){
@@ -66,7 +65,7 @@ public class Move {
         }
 
         if (!movingPiece.setPosition(previousPosition)){
-            logger.error("undo - position update not possible");
+            logger.warning("undo - position update not possible");
         }
 
         addCapturedPiece();
