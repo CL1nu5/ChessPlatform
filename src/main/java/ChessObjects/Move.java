@@ -92,4 +92,9 @@ public class Move {
             board.pieces[addPos.y][addPos.x] = capturedPiece;
         }
     }
+
+    /* position methods */
+    public Point getDistance(){
+        return new Point(postponedPosition.x - previousPosition.x, postponedPosition.y - previousPosition.y);
+    }
 }
