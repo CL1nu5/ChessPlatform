@@ -1,5 +1,6 @@
 package ChessObjects;
 
+import ChessObjects.PieceTypes.Direction;
 import ChessObjects.PieceTypes.Team;
 
 import java.awt.*;
@@ -31,7 +32,7 @@ public class Board {
             for (Piece piece: row){
 
                 //there has to be a piece on the field, and it needs to be in the active team
-                if (piece != null && piece.team.isEqual(activePlayer)){
+                if (piece != null && piece.team.isInSameTeam(activePlayer)){
                     moves.addAll(piece.getMoves());
                 }
             }
@@ -48,7 +49,7 @@ public class Board {
             for (Piece piece : row) {
 
                 //there has to be a piece on the field, and it needs to be in the active team
-                if (piece != null && piece.team.isEqual(activePlayer)){
+                if (piece != null && piece.team.isInSameTeam(activePlayer)){
                     moves.addAll(piece.getPossibleMoves());
                 }
             }
@@ -60,7 +61,7 @@ public class Board {
     /* support methods */
     //switching the active team
     public void switchTeam(){
-        if (activePlayer.isEqual(Team.White))
+        if (activePlayer.isInSameTeam(Team.White))
             activePlayer = Team.Black;
 
         else
@@ -79,4 +80,34 @@ public class Board {
 
         return pieces[position.y][position.x] != null;
     }
+
+    //returns if a position is: outsideBoard = -2, occupied by enemy = -1, free = 0, occupied by teammate = 1
+    public int checkout(Point currPos, Direction dir, int distance, Piece checkoutPiece){
+        Point checkoutPos = getCheckoutPosition(currPos, dir, distance, checkoutPiece);
+
+        //outside
+        if (!isInsideBoard(checkoutPos)){
+            return -2;
+        }
+
+        //free
+        if (pieces[checkoutPos.y][checkoutPos.x] == null){
+            return 0;
+        }
+
+        //same team
+        if (pieces[checkoutPos.y][checkoutPos.x].team.isInSameTeam(checkoutPiece.team)){
+            return 1;
+        }
+
+        //enemy
+        return -1;
+    }
+
+    public Point getCheckoutPosition(Point currPos, Direction dir, int distance, Piece checkoutPiece){
+        int side = checkoutPiece.team.value;
+        return new Point(currPos.x + dir.x * distance * side, currPos.y + dir.y + distance * side);
+    }
+
+
 }
