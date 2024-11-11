@@ -82,8 +82,8 @@ public class Board {
     }
 
     //returns if a position is: outsideBoard = -2, occupied by enemy = -1, free = 0, occupied by teammate = 1
-    public int checkout(Point currPos, Direction dir, int distance, Piece checkoutPiece){
-        Point checkoutPos = getCheckoutPosition(currPos, dir, distance, checkoutPiece);
+    public int checkout(Direction dir, int distance, Piece checkoutPiece){
+        Point checkoutPos = getCheckoutPosition(dir, distance, checkoutPiece);
 
         //outside
         if (!isInsideBoard(checkoutPos)){
@@ -104,9 +104,10 @@ public class Board {
         return -1;
     }
 
-    public Point getCheckoutPosition(Point currPos, Direction dir, int distance, Piece checkoutPiece){
+    public Point getCheckoutPosition(Direction dir, int distance, Piece checkoutPiece){
         int side = checkoutPiece.team.value;
-        return new Point(currPos.x + dir.x * distance * side, currPos.y + dir.y + distance * side);
+        Point currPos = checkoutPiece.currentPosition;
+        return new Point(currPos.x + dir.x * distance * side, currPos.y + dir.y * distance * side);
     }
 
 
