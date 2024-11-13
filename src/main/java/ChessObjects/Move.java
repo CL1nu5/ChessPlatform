@@ -96,4 +96,11 @@ public class Move {
     public Point getDistance(){
         return new Point(postponedPosition.x - previousPosition.x, postponedPosition.y - previousPosition.y);
     }
+
+    /* fundamental objekt methods */
+    public String toString(){
+        return "{movingP: " + movingPiece +"; capturedP: " + capturedPiece + "; previousP: " + previousPosition
+                + "; postponedP: " + postponedPosition + "; connected Move: " + connectedMove
+                + "; board: " + board +"}";
+    }
 }

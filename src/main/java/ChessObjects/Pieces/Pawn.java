@@ -58,11 +58,12 @@ public class Pawn extends Piece {
             Point capturePosition = getCheckoutPosition(dir, 1);
 
             if (checkout(capturePosition) == -1){
-                moves.add()
+                moves.add(new Move(this, board.getPiece(capturePosition), capturePosition, null, board));
             }
         }
     }
 
+    //captures a pawn, trying to bypass by moving two steps in the last move, directly next to it
     public void enPassant(ArrayList<Move> moves){
 
     }
