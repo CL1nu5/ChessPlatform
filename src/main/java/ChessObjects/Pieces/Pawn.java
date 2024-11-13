@@ -65,6 +65,38 @@ public class Pawn extends Piece {
 
     //captures a pawn, trying to bypass by moving two steps in the last move, directly next to it
     public void enPassant(ArrayList<Move> moves){
+        for (Direction[] dir: new Direction[][]{
+                              new Direction[]{Direction.Left, Direction.Up_Left},
+                              new Direction[]{Direction.Right, Direction.Up_Right}}){
+            Point enemyPosition = getCheckoutPosition(dir[0], 2);
 
+            if (checkout(enemyPosition) == -1){
+                Piece enemy = board.getPiece(enemyPosition);
+
+                //needs to be a pawn
+                if (!(enemy instanceof Pawn)){
+                    return;
+                }
+
+                //there has to be a move before this one
+                Move lastMove;
+                if ((lastMove = board.getLastMove()) == null){
+                    return;
+                }
+
+                //enemy had to perform the last move
+                if (lastMove.movingPiece != enemy){
+                    return;
+                }
+
+                //had to be a two-step move
+                if (lastMove.previousPosition != enemy.getCheckoutPosition(Direction.Down, 2)){
+                    return;
+                }
+                
+                //en passant is possible
+                moves.add(new Move(this, enemy, getCheckoutPosition(dir[1], 1), null, board));
+            }
+        }
     }
 }

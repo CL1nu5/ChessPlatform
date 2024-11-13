@@ -123,6 +123,10 @@ public class Board {
     }
 
     public Move getLastMove(){
+        if (previousMoves.isEmpty()){
+            return null;
+        }
+
         return previousMoves.get(previousMoves.size() - 1);
     }
 }
