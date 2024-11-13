@@ -23,7 +23,7 @@ public class Move {
         this.board = board;
     }
 
-    //constructor for basic moves
+    //constructor for basic moves (non capture)
     public Move(Piece movingPiece, Point postponedPosition, Board board){
         this(movingPiece, null, postponedPosition, null, board);
     }

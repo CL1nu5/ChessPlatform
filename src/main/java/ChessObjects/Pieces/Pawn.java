@@ -19,12 +19,51 @@ public class Pawn extends Piece {
     public ArrayList<Move> getPossibleMoves() {
         ArrayList<Move> moves = new ArrayList<>();
 
-        //move one step forward
-        if(board.checkout(Direction.Up,1, this) == 0){
-
+        if (moveOneStep(moves)){
+            moveTwoSteps(moves);
         }
 
+        capture(moves);
+        enPassant(moves);
 
         return moves;
+    }
+
+    //move single step forward, returns: "true" if move is possible, else -> "false"
+    public boolean moveOneStep(ArrayList<Move> moves){
+        Point forwardPosition = getCheckoutPosition(Direction.Up, 1);
+
+        if (checkout(forwardPosition) == 0) {
+            moves.add(new Move(this, forwardPosition, board));
+            return true;
+        }
+
+        return false;
+    }
+
+    //move two steps forward this method asserts, that single step forward is possible
+    public void moveTwoSteps(ArrayList<Move> moves){
+        if (getPreviousMoves().isEmpty()) {
+            Point forwardPosition = getCheckoutPosition(Direction.Up, 2);
+
+            if (checkout(forwardPosition) == 0){
+                moves.add(new Move(this, forwardPosition, board));
+            }
+        }
+    }
+
+    //moves single step forward + to the right/left if it can capture a piece there
+    public void capture(ArrayList<Move> moves){
+        for (Direction dir: new Direction[]{Direction.Up_Left, Direction.Up_Right}){
+            Point capturePosition = getCheckoutPosition(dir, 1);
+
+            if (checkout(capturePosition) == -1){
+                moves.add()
+            }
+        }
+    }
+
+    public void enPassant(ArrayList<Move> moves){
+
     }
 }

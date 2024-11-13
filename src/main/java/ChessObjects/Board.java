@@ -18,9 +18,14 @@ public class Board {
     }
 
     /* execution methods */
-    public void execute(Move move){
-        previousMoves.add(move);
+    public void executeMove(Move move){
         move.execute();
+        previousMoves.add(move);
+    }
+
+    public void undoMove(Move move){
+        previousMoves.remove(move);
+        move.undo();
     }
 
     /* methods to get all moves in a position */
@@ -83,8 +88,10 @@ public class Board {
 
     //returns if a position is: outsideBoard = -2, occupied by enemy = -1, free = 0, occupied by teammate = 1
     public int checkout(Direction dir, int distance, Piece checkoutPiece){
-        Point checkoutPos = getCheckoutPosition(dir, distance, checkoutPiece);
+        return checkout(getCheckoutPosition(dir, distance, checkoutPiece), checkoutPiece);
+    }
 
+    public int checkout(Point checkoutPos, Piece checkoutPiece){
         //outside
         if (!isInsideBoard(checkoutPos)){
             return -2;
@@ -110,5 +117,12 @@ public class Board {
         return new Point(currPos.x + dir.x * distance * side, currPos.y + dir.y * distance * side);
     }
 
+    /* information methods / getter */
+    public Piece getPiece(Point position){
+        return pieces [position.y][position.x];
+    }
 
+    public Move getLastMove(){
+        return previousMoves.get(previousMoves.size() - 1);
+    }
 }

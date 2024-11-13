@@ -4,7 +4,7 @@ A pawn can move in a few different ways:
 
  - Moves if the field is free:
    - One step forward: pos(x=1, y=1) -> pos(x=1, y=2)
-   - Two steps forward (can only be performed, if the space in between is free):
+   - Two steps forward (can only be performed, if the space in between is free and if it is the first move of the pawn):
      pos(x=1, y=1) -> pos(x=1, y=3)
 
  - Moves to capture enemy's:

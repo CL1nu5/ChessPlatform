@@ -1,5 +1,6 @@
 package ChessObjects;
 
+import ChessObjects.PieceTypes.Direction;
 import ChessObjects.PieceTypes.Team;
 
 import java.awt.*;
@@ -48,7 +49,7 @@ public abstract class Piece {
         for (int i = 0; i < moves.size(); i++){
             Move move = moves.get(i);
 
-            move.execute();
+            board.executeMove(move);
 
             ArrayList<Move> counterMoves = board.getPossibleMoves();
             //check if any counter move captures the king -> non-legal move
@@ -59,6 +60,8 @@ public abstract class Piece {
                     break;
                 }
             }
+
+            board.undoMove(move);
         }
 
         return moves;
@@ -75,6 +78,14 @@ public abstract class Piece {
         }
 
         return moves;
+    }
+
+    //makes board checkout notation shorter for each piece
+    public int checkout(Point checkoutPosition){
+        return board.checkout(checkoutPosition, this);
+    }
+    public Point getCheckoutPosition(Direction direction, int distance){
+        return board.getCheckoutPosition(direction, distance, this);
     }
 
     //non confirmed Moves
