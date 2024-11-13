@@ -9,7 +9,7 @@ import junit.framework.TestSuite;
 
 import java.awt.*;
 
-public class BoardTest extends TestCase {
+public class  BoardTest extends TestCase {
 
     public BoardTest(String testName){
         super(testName);

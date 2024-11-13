@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 
-public class TeamTest extends TestCase{
+public class TeamTest extends TestCase {
 
     public TeamTest(String testName){
         super(testName);

@@ -93,7 +93,7 @@ public class Pawn extends Piece {
                 if (lastMove.previousPosition != enemy.getCheckoutPosition(Direction.Down, 2)){
                     return;
                 }
-                
+
                 //en passant is possible
                 moves.add(new Move(this, enemy, getCheckoutPosition(dir[1], 1), null, board));
             }
