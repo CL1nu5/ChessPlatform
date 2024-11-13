@@ -3,6 +3,7 @@ package ChessObjects.Pieces;
 import ChessObjects.Board;
 import ChessObjects.Move;
 import ChessObjects.Piece;
+import ChessObjects.PieceTypes.Direction;
 import ChessObjects.PieceTypes.Team;
 
 import java.awt.*;
@@ -17,6 +18,12 @@ public class Pawn extends Piece {
     @Override
     public ArrayList<Move> getPossibleMoves() {
         ArrayList<Move> moves = new ArrayList<>();
+
+        //move one step forward
+        if(board.checkout(Direction.Up,1, this) == 0){
+
+        }
+
 
         return moves;
     }
