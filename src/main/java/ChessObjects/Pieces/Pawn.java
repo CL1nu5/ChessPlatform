@@ -22,9 +22,9 @@ public class Pawn extends Piece {
         if (moveOneStep(moves)) {
             moveTwoSteps(moves);
         }
-
         capture(moves);
         enPassant(moves);
+
 
         return moves;
     }

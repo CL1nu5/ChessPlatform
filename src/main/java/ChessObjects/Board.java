@@ -28,9 +28,9 @@ public class Board {
     }
 
     public void undoMove(Move move) {
+        switchTeam();
         previousMoves.remove(move);
         move.undo();
-        switchTeam();
     }
 
     /* methods to get all moves in a position */
@@ -136,32 +136,27 @@ public class Board {
     }
 
     /* fundamental objekt methods */
-    public boolean equals(Object that) {
+    public boolean simular(Board that) {
         if (that == null) {
             return false;
         }
 
-        if (that instanceof Board) {
-            Board other = (Board) that;
-
-            if (!piecesEqual(other)) {
-                return false;
-            }
-
-            if (this.activePlayer.isEnemy(other.activePlayer)) {
-                return false;
-            }
-
-            return this.previousMoves.equals(other.previousMoves);
+        if (!piecesSimular(that)) {
+            return false;
         }
 
-        return false;
+        if (this.activePlayer.isEnemy(that.activePlayer)) {
+            return false;
+        }
+
+        return this.previousMoves.equals(that.previousMoves);
+
     }
 
-    public boolean piecesEqual(Board that) {
+    public boolean piecesSimular(Board that) {
         for (int i = 0; i < pieces.length; i++) {
             for (int j = 0; j < pieces[i].length; j++) {
-                if (!pieceEquals(this.pieces[i][j],that.pieces[i][j])){
+                if (!pieceSimular(this.pieces[i][j], that.pieces[i][j])) {
                     return false;
                 }
             }
@@ -170,7 +165,7 @@ public class Board {
         return true;
     }
 
-    public boolean pieceEquals(Piece p1, Piece p2){
+    public boolean pieceSimular(Piece p1, Piece p2) {
         if (p1 == null && p2 == null) {
             return true;
         }

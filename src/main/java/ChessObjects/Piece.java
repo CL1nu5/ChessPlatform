@@ -103,25 +103,22 @@ public abstract class Piece {
         return "{" + displayCharacter + ";" + team + ";[y=" + currentPosition.y + ",x=" + currentPosition.x + "]}";
     }
 
-    public boolean equals(Object that) {
-        if (that == null){
+    public boolean simular(Piece that) {
+        if (that == null) {
             return false;
         }
 
-        if (that instanceof Piece){
-            Piece other = (Piece) that;
 
-            if (this.currentPosition != other.currentPosition){
-                return false;
-            }
-
-            if (this.team.isEnemy(other.team)){
-                return false;
-            }
-
-            return this.displayCharacter.equals(other.displayCharacter);
+        if (this.currentPosition != that.currentPosition) {
+            return false;
         }
 
-        return false;
+        if (this.team.isEnemy(that.team)) {
+            return false;
+        }
+
+        return this.displayCharacter.equals(this.displayCharacter);
+
+
     }
 }

@@ -38,9 +38,12 @@ public class PawnTest extends TestCase {
         enemyPawn.setPosition(new Point(0, 6));
         assertEquals(0, pawn.getPossibleMoves().size());
 
-        //only single move works after the first move
+        //after removing the piece it should be 2 again
         enemyPawn.removeFromBoard();
-        Move executeMove = board.getPossibleMoves().get(0);
+        assertEquals(2, pawn.getPossibleMoves().size());
+
+        //only single move works after the first move
+        Move executeMove = pawn.getPossibleMoves().get(0);
         board.executeMove(executeMove);
         assertEquals(1, pawn.getPossibleMoves().size());
 

@@ -93,37 +93,32 @@ public class Move {
                 + "; board: " + board + "}";
     }
 
-    public boolean equals(Object that) {
-        if (that == null){
+    public boolean simular(Move that) {
+        if (that == null) {
             return false;
         }
 
-        if (that instanceof Move){
-            Move other = (Move) that;
 
-            //connected move
-            boolean connected = true;
-            if (this.connectedMove != null && other.connectedMove != null){
-                connected = connectedMove.equals(other.connectedMove);
-            }
-            else if (this.connectedMove != null || other.connectedMove != null){
-                return false;
-            }
-
-            //current move
-            if (!board.pieceEquals(this.movingPiece, other.movingPiece)){
-                return false;
-            }
-            if (!board.pieceEquals(this.capturedPiece, other.capturedPiece)){
-                return false;
-            }
-            if (!this.previousPosition.equals(other.previousPosition)){
-                return false;
-            }
-            
-            return this.postponedPosition.equals(other.postponedPosition);
+        //connected move
+        boolean connected = true;
+        if (this.connectedMove != null && that.connectedMove != null) {
+            connected = connectedMove.equals(that.connectedMove);
+        } else if (this.connectedMove != null || that.connectedMove != null) {
+            return false;
         }
 
-        return false;
+        //current move
+        if (!board.pieceSimular(this.movingPiece, that.movingPiece)) {
+            return false;
+        }
+        if (!board.pieceSimular(this.capturedPiece, that.capturedPiece)) {
+            return false;
+        }
+        if (!this.previousPosition.equals(that.previousPosition)) {
+            return false;
+        }
+
+        return this.postponedPosition.equals(that.postponedPosition);
+
     }
 }
