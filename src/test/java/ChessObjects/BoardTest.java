@@ -79,9 +79,19 @@ public class BoardTest extends TestCase {
         Pawn piece3 = new Pawn(new Point(1, 6), Team.Black, board);
         piece3.placeOnBoard();
 
-        assertEquals(-2, board.checkout(Direction.Left, 1, piece1));         //outside
+        assertEquals(-2, board.checkout(Direction.Left, 1, piece1));          //outside
         assertEquals(0, board.checkout(Direction.Up, 2, piece1));             //free
         assertEquals(1, board.checkout(Direction.Up, 1, piece1));             //teammate
-        assertEquals(-1, board.checkout(Direction.Up_Right, 1, piece1));    //enemy
+        assertEquals(-1, board.checkout(Direction.Up_Right, 1, piece1));      //enemy
+    }
+
+    public void testEquals() {
+        Board board1 = new Board();
+        Board board2 = new Board();
+
+        //reference shouldn't be important, position, past moves and active teams are the only important parameters
+        assertEquals(board1, board2);
+
+        Pawn pawn = new Pawn(new Point(0, 0), Team.White, board1);
     }
 }

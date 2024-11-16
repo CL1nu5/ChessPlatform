@@ -102,4 +102,22 @@ public abstract class Piece {
     public String toString() {
         return "{" + displayCharacter + ";" + team + ";[y=" + currentPosition.y + ",x=" + currentPosition.x + "]}";
     }
+
+    public boolean equals(Object that) {
+        if (that instanceof Piece){
+            Piece other = (Piece) that;
+
+            if (this.currentPosition != other.currentPosition){
+                return false;
+            }
+
+            if (this.team.isEnemy(other.team)){
+                return false;
+            }
+
+            return this.displayCharacter.equals(other.displayCharacter);
+        }
+
+        return false;
+    }
 }
