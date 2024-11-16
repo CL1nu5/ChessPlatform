@@ -1,0 +1,15 @@
+name: Automated UnitTesting
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: running UnitTest
+        run: echo "Hello world"
+
