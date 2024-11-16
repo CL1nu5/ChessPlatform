@@ -1,5 +1,6 @@
 package ChessObjects;
 
+import ChessObjects.PieceTypes.Direction;
 import ChessObjects.PieceTypes.Team;
 import ChessObjects.Pieces.Pawn;
 import junit.framework.Test;
@@ -8,7 +9,7 @@ import junit.framework.TestSuite;
 
 import java.awt.*;
 
-public class BoardTest extends TestCase {
+public class  BoardTest extends TestCase {
 
     public BoardTest(String testName){
         super(testName);
@@ -51,5 +52,36 @@ public class BoardTest extends TestCase {
         Pawn pawn = new Pawn(new Point(0,0), Team.White, board);
         pawn.placeOnBoard();
         assertTrue(board.isOccupied(new Point(0,0)));
+    }
+
+    //tests checking out position is correct for black and white pieces
+    public void testGetCheckoutPosition(){
+        Board board = new Board();
+
+        Pawn piece1 = new Pawn(new Point(4,4),Team.White,board);
+        assertEquals(new Point(3,3), board.getCheckoutPosition(Direction.Up_Left, 1, piece1));
+        assertEquals(new Point(2,2), board.getCheckoutPosition(Direction.Up_Left, 2, piece1));
+        assertEquals(new Point(1,4), board.getCheckoutPosition(Direction.Left, 3, piece1));
+
+        Pawn piece2 = new Pawn(new Point(3,3),Team.Black,board);
+        assertEquals(new Point(5,5), board.getCheckoutPosition(Direction.Up_Left, 2, piece2));
+        assertEquals(new Point(3,7), board.getCheckoutPosition(Direction.Up, 4, piece2));
+        assertEquals(new Point(1,1), board.getCheckoutPosition(Direction.Down_Right, 2, piece2));
+    }
+
+    //testing every checkout szenario: outside, free, enemy, teammate
+    public void testCheckout(){
+        Board board = new Board();
+
+        Pawn piece1 = new Pawn(new Point(0,7),Team.White,board);
+        Pawn piece2 = new Pawn(new Point(0,6),Team.White,board);
+        piece2.placeOnBoard();
+        Pawn piece3 = new Pawn(new Point(1,6),Team.Black,board);
+        piece3.placeOnBoard();
+
+        assertEquals(-2, board.checkout(Direction.Left,1, piece1));         //outside
+        assertEquals(0, board.checkout(Direction.Up,2,piece1));             //free
+        assertEquals(1, board.checkout(Direction.Up,1,piece1));             //teammate
+        assertEquals(-1, board.checkout(Direction.Up_Right, 1, piece1));    //enemy
     }
 }

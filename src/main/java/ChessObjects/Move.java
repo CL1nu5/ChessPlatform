@@ -1,18 +1,17 @@
 package ChessObjects;
 
 import ChessObjects.Pieces.King;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Logger;
 
 import java.awt.*;
+import java.util.logging.Logger;
 
 public class Move {
-    private final Piece movingPiece, capturedPiece;
-    private final Point previousPosition, postponedPosition;
-    private final Move connectedMove;
-    private final Board board;
+    public final Piece movingPiece, capturedPiece;
+    public final Point previousPosition, postponedPosition;
+    public final Move connectedMove;
+    public final Board board;
 
-    private static final Logger logger = (Logger) LogManager.getLogger(Move.class);
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     //general constructor
     public Move(Piece movingPiece, Piece capturedPiece, Point postponedPosition, Move connectedMove, Board board) {
@@ -24,7 +23,7 @@ public class Move {
         this.board = board;
     }
 
-    //constructor for basic moves
+    //constructor for basic moves (non capture)
     public Move(Piece movingPiece, Point postponedPosition, Board board){
         this(movingPiece, null, postponedPosition, null, board);
     }
@@ -44,15 +43,10 @@ public class Move {
 
     /* updating moves */
     public void execute(){
-        //if there are no more connected moves the team should be switched back
-        if (connectedMove == null){
-            board.switchTeam();
-        }
-
         removeCapturedPiece();
 
         if(!movingPiece.setPosition(postponedPosition)){
-            logger.error("execute - position update not possible");
+            logger.warning("execute - position update not possible");
         }
 
         if (connectedMove != null){
@@ -66,22 +60,16 @@ public class Move {
         }
 
         if (!movingPiece.setPosition(previousPosition)){
-            logger.error("undo - position update not possible");
+            logger.warning("undo - position update not possible");
         }
 
         addCapturedPiece();
-
-        //if there are no more connected moves the team should be switched back
-        if (connectedMove == null){
-            board.switchTeam();
-        }
     }
 
     //execution methods
     public void removeCapturedPiece(){
         if (isCaptureMove()) {
-            Point removePos = capturedPiece.currentPosition;
-            board.pieces[removePos.y][removePos.x] = null;
+            capturedPiece.removeFromBoard();
         }
     }
 
@@ -91,5 +79,17 @@ public class Move {
             Point addPos = capturedPiece.currentPosition;
             board.pieces[addPos.y][addPos.x] = capturedPiece;
         }
+    }
+
+    /* position methods */
+    public Point getDistance(){
+        return new Point(postponedPosition.x - previousPosition.x, postponedPosition.y - previousPosition.y);
+    }
+
+    /* fundamental objekt methods */
+    public String toString(){
+        return "{movingP: " + movingPiece +"; capturedP: " + capturedPiece + "; previousP: " + previousPosition
+                + "; postponedP: " + postponedPosition + "; connected Move: " + connectedMove
+                + "; board: " + board +"}";
     }
 }

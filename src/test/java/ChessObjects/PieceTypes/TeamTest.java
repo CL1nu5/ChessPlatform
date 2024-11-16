@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 
-public class TeamTest extends TestCase{
+public class TeamTest extends TestCase {
 
     public TeamTest(String testName){
         super(testName);
@@ -18,7 +18,7 @@ public class TeamTest extends TestCase{
     //Testing if the teams are considered opposite
     public void testTeamsOpposite1(){
         Team team1 = Team.White, team2 = Team.Black;
-        assertFalse(team1.isEqual(team2));
+        assertFalse(team1.isInSameTeam(team2));
     }
 
     public void testTeamsOpposite2(){
@@ -29,6 +29,6 @@ public class TeamTest extends TestCase{
     //Testing if the teams are considered Equal
     public void testTeamsEqual(){
         Team team1 = Team.White;
-        assertTrue(team1.isEqual(Team.White));
+        assertTrue(team1.isInSameTeam(Team.White));
     }
 }

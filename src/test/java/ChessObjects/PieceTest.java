@@ -27,7 +27,7 @@ public class PieceTest extends TestCase{
         Piece piece = new Pawn(new Point(0,0), Team.White, board);
         assertNull(board.pieces[0][0]);
 
-        piece.placeOnBoard();
+        assertTrue(piece.placeOnBoard());
         assertNotNull(board.pieces[0][0]);
     }
 
