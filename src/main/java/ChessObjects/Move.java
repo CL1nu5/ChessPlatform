@@ -14,18 +14,18 @@ public class Move {
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     //general constructor
-    public Move(Piece movingPiece, Piece capturedPiece, Point postponedPosition, Move connectedMove, Board board) {
+    public Move(Piece movingPiece, Piece capturedPiece, Point postponedPosition, Move connectedMove) {
         this.movingPiece = movingPiece;
         this.capturedPiece = capturedPiece;
         this.previousPosition = movingPiece.currentPosition;
         this.postponedPosition = postponedPosition;
         this.connectedMove = connectedMove;
-        this.board = board;
+        this.board = movingPiece.board;
     }
 
     //constructor for basic moves (non capture)
-    public Move(Piece movingPiece, Point postponedPosition, Board board) {
-        this(movingPiece, null, postponedPosition, null, board);
+    public Move(Piece movingPiece, Point postponedPosition) {
+        this(movingPiece, null, postponedPosition, null);
     }
 
     /* capture methods */
@@ -91,5 +91,39 @@ public class Move {
         return "{movingP: " + movingPiece + "; capturedP: " + capturedPiece + "; previousP: " + previousPosition
                 + "; postponedP: " + postponedPosition + "; connected Move: " + connectedMove
                 + "; board: " + board + "}";
+    }
+
+    public boolean equals(Object that) {
+        if (that == null){
+            return false;
+        }
+
+        if (that instanceof Move){
+            Move other = (Move) that;
+
+            //connected move
+            boolean connected = true;
+            if (this.connectedMove != null && other.connectedMove != null){
+                connected = connectedMove.equals(other.connectedMove);
+            }
+            else if (this.connectedMove != null || other.connectedMove != null){
+                return false;
+            }
+
+            //current move
+            if (!board.pieceEquals(this.movingPiece, other.movingPiece)){
+                return false;
+            }
+            if (!board.pieceEquals(this.capturedPiece, other.capturedPiece)){
+                return false;
+            }
+            if (!this.previousPosition.equals(other.previousPosition)){
+                return false;
+            }
+            
+            return this.postponedPosition.equals(other.postponedPosition);
+        }
+
+        return false;
     }
 }

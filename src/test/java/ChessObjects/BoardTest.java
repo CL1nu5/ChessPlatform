@@ -92,12 +92,19 @@ public class BoardTest extends TestCase {
         //reference shouldn't be important, position, past moves and active teams are the only important parameters
         assertEquals(board1, board2);
 
+        //there should be a difference because of the placed piece
         Pawn pawn1 = new Pawn(new Point(0, 0), Team.White, board1);
         pawn1.placeOnBoard();
-
-        //there should be a difference because of the placed piece
         assertFalse(board1.equals(board2));
 
+        //after adding the second piece the boars should be equal
+        Pawn pawn2 = new Pawn(new Point(0, 0), Team.White, board2);
+        pawn2.placeOnBoard();
+        assertEquals(board1, board2);
 
+        //after moving hte pawn around the boards aren't equal anymore
+        board2.executeMove(new Move(pawn2, new Point(0, 5)));
+        board2.executeMove(new Move(pawn2, new Point(0, 0)));
+        assertFalse(board1.equals(board2));
     }
 }

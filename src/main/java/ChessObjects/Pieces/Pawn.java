@@ -34,7 +34,7 @@ public class Pawn extends Piece {
         Point forwardPosition = getCheckoutPosition(Direction.Up, 1);
 
         if (checkout(forwardPosition) == 0) {
-            moves.add(new Move(this, forwardPosition, board));
+            moves.add(new Move(this, forwardPosition));
             return true;
         }
 
@@ -47,7 +47,7 @@ public class Pawn extends Piece {
             Point forwardPosition = getCheckoutPosition(Direction.Up, 2);
 
             if (checkout(forwardPosition) == 0) {
-                moves.add(new Move(this, forwardPosition, board));
+                moves.add(new Move(this, forwardPosition));
             }
         }
     }
@@ -58,7 +58,7 @@ public class Pawn extends Piece {
             Point capturePosition = getCheckoutPosition(dir, 1);
 
             if (checkout(capturePosition) == -1) {
-                moves.add(new Move(this, board.getPiece(capturePosition), capturePosition, null, board));
+                moves.add(new Move(this, board.getPiece(capturePosition), capturePosition, null));
             }
         }
     }
@@ -94,7 +94,7 @@ public class Pawn extends Piece {
                     continue;
                 }
                 //en passant is possible
-                moves.add(new Move(this, enemy, getCheckoutPosition(dir[1], 1), null, board));
+                moves.add(new Move(this, enemy, getCheckoutPosition(dir[1], 1), null));
             }
         }
     }

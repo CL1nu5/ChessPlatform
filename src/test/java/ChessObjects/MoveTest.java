@@ -22,10 +22,10 @@ public class MoveTest extends TestCase {
         Board board = new Board();
         Pawn piece = new Pawn(new Point(1, 1), Team.White, board);
 
-        Move move1 = new Move(piece, new Point(2, 2), board);
-        Move move2 = new Move(piece, new Point(5, 3), board);
-        Move move3 = new Move(piece, new Point(1, 1), board);
-        Move move4 = new Move(piece, new Point(0, 7), board);
+        Move move1 = new Move(piece, new Point(2, 2));
+        Move move2 = new Move(piece, new Point(5, 3));
+        Move move3 = new Move(piece, new Point(1, 1));
+        Move move4 = new Move(piece, new Point(0, 7));
 
         //test
         assertEquals(move1.getDistance(), new Point(1, 1));

@@ -137,7 +137,7 @@ public class Board {
 
     /* fundamental objekt methods */
     public boolean equals(Object that) {
-        if (that == null){
+        if (that == null) {
             return false;
         }
 
@@ -152,36 +152,34 @@ public class Board {
                 return false;
             }
 
-            return this.previousMoves.equals(((Board) that).previousMoves);
+            return this.previousMoves.equals(other.previousMoves);
         }
 
         return false;
     }
 
     public boolean piecesEqual(Board that) {
-        try {
-            for (int i = 0; i < pieces.length; i++) {
-                for (int j = 0; j < pieces[i].length; j++) {
-                    if (this.pieces[i][j] == null && that.pieces[i][j] == null){
-                        continue;
-                    }
-
-                    if (this.pieces[i][j] == null || that.pieces[i][j] == null){
-                        return false;
-                    }
-
-                    if (!this.pieces[i][j].equals(that.pieces[i][j])) {
-                        return false;
-                    }
+        for (int i = 0; i < pieces.length; i++) {
+            for (int j = 0; j < pieces[i].length; j++) {
+                if (!pieceEquals(this.pieces[i][j],that.pieces[i][j])){
+                    return false;
                 }
             }
-
-            return true;
-        } catch (ArrayIndexOutOfBoundsException e) {
-            logger.warning("board:piecesEqual - Indexes dont match");
         }
 
-        return false;
+        return true;
+    }
+
+    public boolean pieceEquals(Piece p1, Piece p2){
+        if (p1 == null && p2 == null) {
+            return true;
+        }
+
+        if (p1 == null || p2 == null) {
+            return false;
+        }
+
+        return !p1.equals(p2);
     }
 
     public String toString() {
@@ -202,7 +200,7 @@ public class Board {
         s.append(activePlayer.toString()).append("\n");
 
         s.append("-------------------Previous-Moves--------------------" + '\n');
-        for (Move move : previousMoves){
+        for (Move move : previousMoves) {
             s.append(move.toString()).append('\n');
         }
 
