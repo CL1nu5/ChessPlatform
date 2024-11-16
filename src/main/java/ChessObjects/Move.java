@@ -24,72 +24,72 @@ public class Move {
     }
 
     //constructor for basic moves (non capture)
-    public Move(Piece movingPiece, Point postponedPosition, Board board){
+    public Move(Piece movingPiece, Point postponedPosition, Board board) {
         this(movingPiece, null, postponedPosition, null, board);
     }
 
     /* capture methods */
     //checks if a piece was captured by this move
-    public boolean isCaptureMove(){
+    public boolean isCaptureMove() {
         return capturedPiece != null;
     }
 
-    public boolean isKingCaptured(){
-        if(! isCaptureMove()){
+    public boolean isKingCaptured() {
+        if (!isCaptureMove()) {
             return false;
         }
         return capturedPiece instanceof King;
     }
 
     /* updating moves */
-    public void execute(){
+    public void execute() {
         removeCapturedPiece();
 
-        if(!movingPiece.setPosition(postponedPosition)){
-            logger.warning("execute - position update not possible");
+        if (!movingPiece.setPosition(postponedPosition)) {
+            logger.warning("move:execute - position update not possible");
         }
 
-        if (connectedMove != null){
+        if (connectedMove != null) {
             connectedMove.execute();
         }
     }
 
-    public void undo(){
-        if (connectedMove != null){
+    public void undo() {
+        if (connectedMove != null) {
             connectedMove.undo();
         }
 
-        if (!movingPiece.setPosition(previousPosition)){
-            logger.warning("undo - position update not possible");
+        if (!movingPiece.setPosition(previousPosition)) {
+            logger.warning("move:undo - position update not possible");
         }
 
         addCapturedPiece();
     }
 
     //execution methods
-    public void removeCapturedPiece(){
+    public void removeCapturedPiece() {
         if (isCaptureMove()) {
             capturedPiece.removeFromBoard();
         }
     }
 
     //undo methods
-    public void addCapturedPiece(){
-        if (isCaptureMove()){
+    public void addCapturedPiece() {
+        if (isCaptureMove()) {
             Point addPos = capturedPiece.currentPosition;
             board.pieces[addPos.y][addPos.x] = capturedPiece;
         }
     }
 
     /* position methods */
-    public Point getDistance(){
+    public Point getDistance() {
         return new Point(postponedPosition.x - previousPosition.x, postponedPosition.y - previousPosition.y);
     }
 
     /* fundamental objekt methods */
-    public String toString(){
-        return "{movingP: " + movingPiece +"; capturedP: " + capturedPiece + "; previousP: " + previousPosition
+    public String toString() {
+        return "{movingP: " + movingPiece + "; capturedP: " + capturedPiece + "; previousP: " + previousPosition
                 + "; postponedP: " + postponedPosition + "; connected Move: " + connectedMove
-                + "; board: " + board +"}";
+                + "; board: " + board + "}";
     }
 }
