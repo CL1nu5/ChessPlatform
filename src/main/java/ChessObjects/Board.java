@@ -137,6 +137,10 @@ public class Board {
 
     /* fundamental objekt methods */
     public boolean equals(Object that) {
+        if (that == null){
+            return false;
+        }
+
         if (that instanceof Board) {
             Board other = (Board) that;
 
@@ -158,7 +162,15 @@ public class Board {
         try {
             for (int i = 0; i < pieces.length; i++) {
                 for (int j = 0; j < pieces[i].length; j++) {
-                    if (this.pieces[i][j] != that.pieces[i][j]) {
+                    if (this.pieces[i][j] == null && that.pieces[i][j] == null){
+                        continue;
+                    }
+
+                    if (this.pieces[i][j] == null || that.pieces[i][j] == null){
+                        return false;
+                    }
+
+                    if (!this.pieces[i][j].equals(that.pieces[i][j])) {
                         return false;
                     }
                 }

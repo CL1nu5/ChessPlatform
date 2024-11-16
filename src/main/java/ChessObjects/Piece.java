@@ -104,6 +104,10 @@ public abstract class Piece {
     }
 
     public boolean equals(Object that) {
+        if (that == null){
+            return false;
+        }
+
         if (that instanceof Piece){
             Piece other = (Piece) that;
 
