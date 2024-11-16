@@ -68,32 +68,31 @@ public class Pawn extends Piece {
         for (Direction[] dir: new Direction[][]{
                               new Direction[]{Direction.Left, Direction.Up_Left},
                               new Direction[]{Direction.Right, Direction.Up_Right}}){
-            Point enemyPosition = getCheckoutPosition(dir[0], 2);
+            Point enemyPosition = getCheckoutPosition(dir[0], 1);
 
             if (checkout(enemyPosition) == -1){
                 Piece enemy = board.getPiece(enemyPosition);
 
                 //needs to be a pawn
                 if (!(enemy instanceof Pawn)){
-                    return;
+                    continue;
                 }
 
                 //there has to be a move before this one
                 Move lastMove;
                 if ((lastMove = board.getLastMove()) == null){
-                    return;
+                    continue;
                 }
 
                 //enemy had to perform the last move
                 if (lastMove.movingPiece != enemy){
-                    return;
+                    continue;
                 }
 
                 //had to be a two-step move
-                if (lastMove.previousPosition != enemy.getCheckoutPosition(Direction.Down, 2)){
-                    return;
+                if (!lastMove.previousPosition.equals(enemy.getCheckoutPosition(Direction.Down, 2))){
+                    continue;
                 }
-
                 //en passant is possible
                 moves.add(new Move(this, enemy, getCheckoutPosition(dir[1], 1), null, board));
             }

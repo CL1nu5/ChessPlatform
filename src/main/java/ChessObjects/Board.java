@@ -21,11 +21,13 @@ public class Board {
     public void executeMove(Move move){
         move.execute();
         previousMoves.add(move);
+        switchTeam();
     }
 
     public void undoMove(Move move){
         previousMoves.remove(move);
         move.undo();
+        switchTeam();
     }
 
     /* methods to get all moves in a position */

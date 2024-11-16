@@ -28,6 +28,12 @@ public abstract class Piece {
         return true;
     }
 
+    public void removeFromBoard(){
+        if(currentPosition != null){
+            board.pieces[currentPosition.y][currentPosition.x] = null;
+        }
+    }
+
     public boolean setPosition(Point newPosition){
         //check if position is inside board and position is occupied
         if (board.isOccupied(newPosition)){
