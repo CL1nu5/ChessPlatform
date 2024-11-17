@@ -7,20 +7,20 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public abstract class Piece {
-    protected Point currentPosition;
     protected final Board board;
+    protected Point currentPosition;
     protected Team team;
     protected String displayCharacter;
 
-    public Piece(String displayCharacter, Point startingPosition, Team team, Board board){
+    public Piece(String displayCharacter, Point startingPosition, Team team, Board board) {
         this.currentPosition = startingPosition;
         this.team = team;
         this.board = board;
         this.displayCharacter = displayCharacter;
     }
 
-    public boolean placeOnBoard(){
-        if (board.isOccupied(currentPosition)){
+    public boolean placeOnBoard() {
+        if (board.isOccupied(currentPosition)) {
             return false;
         }
 
@@ -28,15 +28,15 @@ public abstract class Piece {
         return true;
     }
 
-    public void removeFromBoard(){
-        if(currentPosition != null){
+    public void removeFromBoard() {
+        if (currentPosition != null) {
             board.pieces[currentPosition.y][currentPosition.x] = null;
         }
     }
 
-    public boolean setPosition(Point newPosition){
+    public boolean setPosition(Point newPosition) {
         //check if position is inside board and position is occupied
-        if (board.isOccupied(newPosition)){
+        if (board.isOccupied(newPosition)) {
             return false;
         }
 
@@ -49,18 +49,18 @@ public abstract class Piece {
     }
 
     //get confirmed Moves of this piece
-    public ArrayList<Move> getMoves(){
+    public ArrayList<Move> getMoves() {
         ArrayList<Move> moves = getPossibleMoves();
 
-        for (int i = 0; i < moves.size(); i++){
+        for (int i = 0; i < moves.size(); i++) {
             Move move = moves.get(i);
 
             board.executeMove(move);
 
             ArrayList<Move> counterMoves = board.getPossibleMoves();
             //check if any counter move captures the king -> non-legal move
-            for (Move counterMove : counterMoves){
-                if (counterMove.isKingCaptured()){
+            for (Move counterMove : counterMoves) {
+                if (counterMove.isKingCaptured()) {
                     moves.remove(i);
                     i--;
                     break;
@@ -74,11 +74,11 @@ public abstract class Piece {
     }
 
     //get every move performed by this piece
-    public ArrayList<Move> getPreviousMoves(){
+    public ArrayList<Move> getPreviousMoves() {
         ArrayList<Move> moves = new ArrayList<>();
 
-        for (Move previousMove : board.previousMoves){
-            if (previousMove.movingPiece == this){
+        for (Move previousMove : board.previousMoves) {
+            if (previousMove.movingPiece == this) {
                 moves.add(previousMove);
             }
         }
@@ -87,10 +87,11 @@ public abstract class Piece {
     }
 
     //makes board checkout notation shorter for each piece
-    public int checkout(Point checkoutPosition){
+    public int checkout(Point checkoutPosition) {
         return board.checkout(checkoutPosition, this);
     }
-    public Point getCheckoutPosition(Direction direction, int distance){
+
+    public Point getCheckoutPosition(Direction direction, int distance) {
         return board.getCheckoutPosition(direction, distance, this);
     }
 
@@ -98,7 +99,26 @@ public abstract class Piece {
     public abstract ArrayList<Move> getPossibleMoves();
 
     /* fundamental objekt methods */
-    public String toString(){
-        return  "{" + displayCharacter +";" + team +  ";[y=" + currentPosition.y + ",x=" + currentPosition.x + "]}";
+    public String toString() {
+        return "{" + displayCharacter + ";" + team + ";[y=" + currentPosition.y + ",x=" + currentPosition.x + "]}";
+    }
+
+    public boolean isSimular(Piece that) {
+        if (that == null) {
+            return false;
+        }
+
+
+        if (this.currentPosition != that.currentPosition) {
+            return false;
+        }
+
+        if (this.team.isEnemy(that.team)) {
+            return false;
+        }
+
+        return this.displayCharacter.equals(this.displayCharacter);
+
+
     }
 }
