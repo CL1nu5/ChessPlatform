@@ -118,7 +118,7 @@ public class Move implements Cloneable{
             return false;
         }
 
-        return this.postponedPosition.equals(that.postponedPosition);
+        return this.postponedPosition.equals(that.postponedPosition) && connected;
 
     }
 
