@@ -5,6 +5,7 @@ import ChessObjects.PieceTypes.Team;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public abstract class Piece implements Cloneable {
     protected Board board;
@@ -58,8 +59,13 @@ public abstract class Piece implements Cloneable {
         return moves;
     }
 
-    //non confirmed Moves
+    //non confirmed moves
     public abstract ArrayList<Move> getPossibleMoves();
+
+    //get every move that captures an opponent piece
+    public ArrayList<Move> getCaptureMoves(){
+        return (ArrayList<Move>) getPossibleMoves().stream().filter(Move::isCaptureMove).collect(Collectors.toList());
+    }
 
     //getting directional moves to a preset maximum depth or the end of the board
     public ArrayList<Move> getDirectionalMoves(Direction[] directions, int maxDepth) {
