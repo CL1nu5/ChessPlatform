@@ -5,6 +5,7 @@ import ChessObjects.PieceTypes.Team;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public abstract class Piece implements Cloneable {
     protected Board board;
@@ -19,35 +20,7 @@ public abstract class Piece implements Cloneable {
         this.displayCharacter = displayCharacter;
     }
 
-    public boolean placeOnBoard() {
-        if (board.isOccupied(currentPosition)) {
-            return false;
-        }
-
-        board.pieces[currentPosition.y][currentPosition.x] = this;
-        return true;
-    }
-
-    public void removeFromBoard() {
-        if (currentPosition != null) {
-            board.pieces[currentPosition.y][currentPosition.x] = null;
-        }
-    }
-
-    public boolean setPosition(Point newPosition) {
-        //check if position is inside board and position is occupied
-        if (board.isOccupied(newPosition)) {
-            return false;
-        }
-
-        //changing the board postion of the piece
-        board.pieces[currentPosition.y][currentPosition.x] = null;
-        board.pieces[newPosition.y][newPosition.x] = this;
-
-        this.currentPosition = newPosition;
-        return true;
-    }
-
+    /* getting moves */
     //get confirmed Moves of this piece
     public ArrayList<Move> getMoves() {
         ArrayList<Move> moves = getPossibleMoves();
@@ -86,6 +59,56 @@ public abstract class Piece implements Cloneable {
         return moves;
     }
 
+    //non confirmed moves
+    public abstract ArrayList<Move> getPossibleMoves();
+
+    //get every move that captures an opponent piece
+    public ArrayList<Move> getCaptureMoves(){
+        return (ArrayList<Move>) getPossibleMoves().stream().filter(Move::isCaptureMove).collect(Collectors.toList());
+    }
+
+    //getting directional moves to a preset maximum depth or the end of the board
+    public ArrayList<Move> getDirectionalMoves(Direction[] directions, int maxDepth) {
+        ArrayList<Move> moves = new ArrayList<>();
+
+        //check edge case
+        if (maxDepth == 0) {
+            return moves;
+        }
+
+        //go through every direction
+        for (Direction dir : directions) {
+            int depth = 1;
+
+            do {
+                Point checkoutPos = getCheckoutPosition(dir, depth);
+                int evaluation = checkout(checkoutPos);
+
+                //outside and teammate
+                if (evaluation == -2 || evaluation == 1) {
+                    break;
+                }
+
+                //enemy
+                else if (evaluation == -1) {
+                    moves.add(new Move(this, board.getPiece(checkoutPos), checkoutPos, null));
+                    break;
+                }
+
+                //free
+                else {
+                    moves.add(new Move(this, checkoutPos));
+                }
+
+                depth++;
+            } while (depth < maxDepth);
+        }
+
+        return moves;
+    }
+
+
+    /* position methods */
     //makes board checkout notation shorter for each piece
     public int checkout(Point checkoutPosition) {
         return board.checkout(checkoutPosition, this);
@@ -95,8 +118,37 @@ public abstract class Piece implements Cloneable {
         return board.getCheckoutPosition(direction, distance, this);
     }
 
-    //non confirmed Moves
-    public abstract ArrayList<Move> getPossibleMoves();
+    //adds the board to the selected board, before this method is called it won't apear
+    public boolean placeOnBoard() {
+        if (board.isOccupied(currentPosition)) {
+            return false;
+        }
+
+        board.pieces[currentPosition.y][currentPosition.x] = this;
+        return true;
+    }
+
+    //removes the piece from the current board position
+    public void removeFromBoard() {
+        if (currentPosition != null) {
+            board.pieces[currentPosition.y][currentPosition.x] = null;
+        }
+    }
+
+    //relocates
+    public boolean setPosition(Point newPosition) {
+        //check if position is inside board and position is occupied
+        if (board.isOccupied(newPosition)) {
+            return false;
+        }
+
+        //changing the board postion of the piece
+        removeFromBoard();
+        this.currentPosition = newPosition;
+        placeOnBoard();
+
+        return true;
+    }
 
     /* fundamental objekt methods */
     public String toString() {
@@ -121,7 +173,7 @@ public abstract class Piece implements Cloneable {
     }
 
     //clones everything
-    public Piece clone(Board cloneBoard){
+    public Piece clone(Board cloneBoard) {
         try {
             Piece clone = (Piece) super.clone();
 
