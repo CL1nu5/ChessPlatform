@@ -8,7 +8,7 @@ import ChessObjects.PieceTypes.Team;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Bishop extends Piece {
+public class Bishop extends Piece{
 
     public Bishop(Point startingPosition, Team team, Board board) {
         super("B", startingPosition, team, board);

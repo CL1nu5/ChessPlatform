@@ -107,4 +107,44 @@ public class BoardTest extends TestCase {
         board2.executeMove(new Move(pawn2, new Point(0, 0)));
         assertFalse(board1.isSimilar(board2));
     }
+
+    public void testClone(){
+        //setup
+        Board board1 = new Board();
+        Piece pawn = new Pawn(new Point(0,0),Team.Black, board1);
+        pawn.placeOnBoard();
+        Board board2 = board1.clone();
+
+        //checks if similar after all
+        assertTrue(board1.isSimilar(board2));
+
+        //checks that everything is different after cloning
+        assertNotSame(board1, board2);
+        assertNotSame(board1.pieces, board2.pieces);
+        assertNotSame(board1.previousMoves, board2.previousMoves);
+        assertNotSame(board1.pieces[0][0], board2.pieces[0][0]);
+
+        board1.executeMove(pawn.getPossibleMoves().get(0));
+        assertNotSame(board1.previousMoves.size(),board2.previousMoves.size());
+        assertFalse(board1.isSimilar(board2));
+    }
+
+    public void testExecuteAndUndo(){
+        //setup
+        Board board1 = new Board();
+        Piece pawn = new Pawn(new Point(0,0),Team.Black, board1);
+        pawn.placeOnBoard();
+        Board board2 = board1.clone();
+
+        Move move = pawn.getPossibleMoves().get(1);
+
+        //checks if they change after execution
+        board1.executeMove(move);
+        assertFalse(board1.isSimilar(board2));
+
+        //checks if they are same again after undo
+        board1.undoMove(move);
+        assertTrue(board1.isSimilar(board2));
+
+    }
 }

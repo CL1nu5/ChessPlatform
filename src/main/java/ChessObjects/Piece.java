@@ -6,8 +6,8 @@ import ChessObjects.PieceTypes.Team;
 import java.awt.*;
 import java.util.ArrayList;
 
-public abstract class Piece {
-    protected final Board board;
+public abstract class Piece implements Cloneable {
+    protected Board board;
     protected Point currentPosition;
     protected Team team;
     protected String displayCharacter;
@@ -117,8 +117,21 @@ public abstract class Piece {
             return false;
         }
 
-        return this.displayCharacter.equals(this.displayCharacter);
-
-
+        return this.displayCharacter.equals(that.displayCharacter);
     }
+
+    //clones everything
+    public Piece clone(Board cloneBoard){
+        try {
+            Piece clone = (Piece) super.clone();
+
+            clone.currentPosition = (Point) currentPosition.clone();
+            clone.board = cloneBoard;
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
