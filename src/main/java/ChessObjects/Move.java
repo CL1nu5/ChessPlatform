@@ -98,7 +98,6 @@ public class Move implements Cloneable{
             return false;
         }
 
-
         //connected move
         boolean connected = true;
         if (this.connectedMove != null && that.connectedMove != null) {
