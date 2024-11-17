@@ -1,6 +1,6 @@
 package ChessObjects.PieceTypes;
 
-public enum Team {
+public enum Team{
     White('w', 1), Black('b', -1);
 
     public final char character;

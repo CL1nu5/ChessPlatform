@@ -5,11 +5,11 @@ import ChessObjects.Pieces.King;
 import java.awt.*;
 import java.util.logging.Logger;
 
-public class Move {
-    public final Piece movingPiece, capturedPiece;
-    public final Point previousPosition, postponedPosition;
-    public final Move connectedMove;
-    public final Board board;
+public class Move implements Cloneable{
+    public Piece movingPiece, capturedPiece;
+    public Point previousPosition, postponedPosition;
+    public Move connectedMove;
+    public Board board;
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -102,7 +102,7 @@ public class Move {
         //connected move
         boolean connected = true;
         if (this.connectedMove != null && that.connectedMove != null) {
-            connected = connectedMove.equals(that.connectedMove);
+            connected = connectedMove.isSimular(that.connectedMove);
         } else if (this.connectedMove != null || that.connectedMove != null) {
             return false;
         }
@@ -120,5 +120,23 @@ public class Move {
 
         return this.postponedPosition.equals(that.postponedPosition);
 
+    }
+
+    //clones everything except board
+    public Move clone(Board cloneBoard) {
+        try {
+            Move clone = (Move) super.clone();
+
+            clone.movingPiece = cloneBoard.getPiece(movingPiece.currentPosition);
+            clone.capturedPiece = cloneBoard.getPiece(capturedPiece.currentPosition);
+            clone.previousPosition = clone.movingPiece.currentPosition;
+            clone.postponedPosition = (Point) postponedPosition.clone();
+            clone.connectedMove = connectedMove.clone(cloneBoard);
+            clone.board = cloneBoard;
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

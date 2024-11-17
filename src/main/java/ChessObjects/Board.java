@@ -7,9 +7,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-public class Board {
+public class Board implements Cloneable{
     public Piece[][] pieces;
-    public final ArrayList<Move> previousMoves;
+    public ArrayList<Move> previousMoves;
     public Team activePlayer;
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
@@ -174,7 +174,7 @@ public class Board {
             return true;
         }
 
-        return p1.equals(p2);
+        return p1.isSimular(p2);
     }
 
     public String toString() {
@@ -200,5 +200,40 @@ public class Board {
         }
 
         return s.toString();
+    }
+
+    //clones ever piece and move.
+    @Override
+    @SuppressWarnings("unchecked")
+    public Board clone() {
+        try {
+            Board clone = (Board) super.clone();
+
+            clone.pieces = new Piece[8][8];
+            clone.previousMoves = (ArrayList<Move>) previousMoves.clone();
+
+            clonePieces(clone);
+            clonePreviousMoves(clone);
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    public void clonePieces(Board clone){
+        for (int i = 0; i < pieces.length; i++) {
+            for (int j = 0; j < pieces[i].length; j++) {
+                if (pieces[i][j] != null){
+                    clone.pieces[i][j] = pieces[i][j].clone(clone);
+                }
+            }
+        }
+    }
+
+    public void clonePreviousMoves(Board clone){
+        for (int i = 0; i < previousMoves.size(); i++){
+            clone.previousMoves.add(i, previousMoves.get(i).clone(clone));
+        }
     }
 }

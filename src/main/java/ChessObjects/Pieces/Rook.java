@@ -8,7 +8,7 @@ import ChessObjects.PieceTypes.Team;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Rook extends Piece {
+public class Rook extends Piece implements Cloneable{
 
     public Rook(Point startingPosition, Team team, Board board) {
         super("R", startingPosition, team, board);
@@ -16,6 +16,11 @@ public class Rook extends Piece {
 
     @Override
     public ArrayList<Move> getPossibleMoves() {
+        return null;
+    }
+
+    @Override
+    public Piece clone(Board cloneBoard) {
         return null;
     }
 }

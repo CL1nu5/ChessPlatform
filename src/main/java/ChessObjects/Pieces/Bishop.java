@@ -8,7 +8,7 @@ import ChessObjects.PieceTypes.Team;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Bishop extends Piece {
+public class Bishop extends Piece implements Cloneable{
 
     public Bishop(Point startingPosition, Team team, Board board) {
         super("B", startingPosition, team, board);
@@ -16,6 +16,11 @@ public class Bishop extends Piece {
 
     @Override
     public ArrayList<Move> getPossibleMoves() {
+        return null;
+    }
+
+    @Override
+    public Piece clone(Board cloneBoard) {
         return null;
     }
 }
