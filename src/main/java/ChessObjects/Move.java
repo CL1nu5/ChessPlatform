@@ -93,7 +93,7 @@ public class Move {
                 + "; board: " + board + "}";
     }
 
-    public boolean simular(Move that) {
+    public boolean isSimular(Move that) {
         if (that == null) {
             return false;
         }
@@ -108,10 +108,10 @@ public class Move {
         }
 
         //current move
-        if (!board.pieceSimular(this.movingPiece, that.movingPiece)) {
+        if (board.pieceNotSimilar(this.movingPiece, that.movingPiece)) {
             return false;
         }
-        if (!board.pieceSimular(this.capturedPiece, that.capturedPiece)) {
+        if (board.pieceNotSimilar(this.capturedPiece, that.capturedPiece)) {
             return false;
         }
         if (!this.previousPosition.equals(that.previousPosition)) {

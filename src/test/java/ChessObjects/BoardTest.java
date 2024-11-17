@@ -90,21 +90,21 @@ public class BoardTest extends TestCase {
         Board board2 = new Board();
 
         //reference shouldn't be important, position, past moves and active teams are the only important parameters
-        assertTrue(board1.simular(board2));
+        assertTrue(board1.isSimilar(board2));
 
         //there should be a difference because of the placed piece
         Pawn pawn1 = new Pawn(new Point(0, 0), Team.White, board1);
         pawn1.placeOnBoard();
-        assertFalse(board1.simular(board2));
+        assertFalse(board1.isSimilar(board2));
 
         //after adding the second piece the boars should be equal
         Pawn pawn2 = new Pawn(new Point(0, 0), Team.White, board2);
         pawn2.placeOnBoard();
-        assertTrue(board1.simular(board2));
+        assertTrue(board1.isSimilar(board2));
 
         //after moving hte pawn around the boards aren't equal anymore
         board2.executeMove(new Move(pawn2, new Point(0, 5)));
         board2.executeMove(new Move(pawn2, new Point(0, 0)));
-        assertFalse(board1.simular(board2));
+        assertFalse(board1.isSimilar(board2));
     }
 }

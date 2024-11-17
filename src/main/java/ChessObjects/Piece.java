@@ -103,7 +103,7 @@ public abstract class Piece {
         return "{" + displayCharacter + ";" + team + ";[y=" + currentPosition.y + ",x=" + currentPosition.x + "]}";
     }
 
-    public boolean simular(Piece that) {
+    public boolean isSimular(Piece that) {
         if (that == null) {
             return false;
         }

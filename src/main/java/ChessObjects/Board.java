@@ -136,12 +136,12 @@ public class Board {
     }
 
     /* fundamental objekt methods */
-    public boolean simular(Board that) {
+    public boolean isSimilar(Board that) {
         if (that == null) {
             return false;
         }
 
-        if (!piecesSimular(that)) {
+        if (!arePiecesSimilar(that)) {
             return false;
         }
 
@@ -153,10 +153,10 @@ public class Board {
 
     }
 
-    public boolean piecesSimular(Board that) {
+    public boolean arePiecesSimilar(Board that) {
         for (int i = 0; i < pieces.length; i++) {
             for (int j = 0; j < pieces[i].length; j++) {
-                if (!pieceSimular(this.pieces[i][j], that.pieces[i][j])) {
+                if (pieceNotSimilar(this.pieces[i][j], that.pieces[i][j])) {
                     return false;
                 }
             }
@@ -165,16 +165,16 @@ public class Board {
         return true;
     }
 
-    public boolean pieceSimular(Piece p1, Piece p2) {
+    public boolean pieceNotSimilar(Piece p1, Piece p2) {
         if (p1 == null && p2 == null) {
-            return true;
-        }
-
-        if (p1 == null || p2 == null) {
             return false;
         }
 
-        return !p1.equals(p2);
+        if (p1 == null || p2 == null) {
+            return true;
+        }
+
+        return p1.equals(p2);
     }
 
     public String toString() {
