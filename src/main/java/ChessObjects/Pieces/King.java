@@ -25,13 +25,19 @@ public class King extends Piece {
 
     public void castle(ArrayList<Move> moves){
         //it has to be the first move of the king
-        if (!getMoves().isEmpty()){
+        if (!getPreviousMoves().isEmpty()){
             return;
         }
+
+        //set king to other team, so he can capture allay rook
+        team = team.getOpposite();
 
         //check if there are no pieces between the king and the rooks
         Direction[] directions = {Direction.Left, Direction.Right};
         ArrayList<Move> captures = getCaptureMoves(getDirectionalMoves(directions, Integer.MAX_VALUE));
+
+        //switch back after finding rooks
+        team = team.getOpposite();
 
 
         for (Move capture : captures){
@@ -40,7 +46,7 @@ public class King extends Piece {
                 Rook rook = (Rook) capture.capturedPiece;
 
                 //check that rook hasn't performed any moves before
-                if (!rook.getMoves().isEmpty())
+                if (!rook.getPreviousMoves().isEmpty())
                     continue;
 
                 //check if king is moving through check
