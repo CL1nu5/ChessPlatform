@@ -17,7 +17,7 @@ public class Rook extends Piece {
 
     @Override
     public ArrayList<Move> getPossibleMoves() {
-        Direction[] directions = new Direction[]{Direction.Up, Direction.Down, Direction.Left, Direction.Right};
-        return getDirectionalMoves(directions, Integer.MAX_VALUE);
+        //horizontal and vertical moves
+        return getDirectionalMoves(Direction.rookMoves, Integer.MAX_VALUE);
     }
 }

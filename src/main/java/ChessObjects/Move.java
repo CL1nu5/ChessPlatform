@@ -3,6 +3,7 @@ package ChessObjects;
 import ChessObjects.Pieces.King;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 public class Move implements Cloneable{
@@ -79,6 +80,23 @@ public class Move implements Cloneable{
             Point addPos = capturedPiece.currentPosition;
             board.pieces[addPos.y][addPos.x] = capturedPiece;
         }
+    }
+
+    public boolean isIllegalMove(){
+        boolean returnValue = false;
+        board.executeMove(this);
+
+        ArrayList<Move> counterMoves = board.getPossibleMoves();
+        //check if any counter move captures the king -> non-legal move
+        for (Move counterMove : counterMoves) {
+            if (counterMove.isKingCaptured()) {
+                returnValue = true;
+                break;
+            }
+        }
+
+        board.undoMove(this);
+        return returnValue;
     }
 
     /* position methods */

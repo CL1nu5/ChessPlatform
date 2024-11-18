@@ -3,6 +3,7 @@ package ChessObjects.Pieces;
 import ChessObjects.Board;
 import ChessObjects.Move;
 import ChessObjects.Piece;
+import ChessObjects.PieceTypes.Direction;
 import ChessObjects.PieceTypes.Team;
 
 import java.awt.*;
@@ -16,6 +17,7 @@ public class Knight extends Piece {
 
     @Override
     public ArrayList<Move> getPossibleMoves() {
-        return null;
+        //Knight Directions (L-shaped moves)
+        return getDirectionalMoves(Direction.knightMoves, 1);
     }
 }
