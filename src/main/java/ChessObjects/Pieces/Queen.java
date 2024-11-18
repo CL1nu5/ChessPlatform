@@ -3,6 +3,7 @@ package ChessObjects.Pieces;
 import ChessObjects.Board;
 import ChessObjects.Move;
 import ChessObjects.Piece;
+import ChessObjects.PieceTypes.Direction;
 import ChessObjects.PieceTypes.Team;
 
 import java.awt.*;
@@ -16,6 +17,7 @@ public class Queen extends Piece {
 
     @Override
     public ArrayList<Move> getPossibleMoves() {
-        return null;
+        //horizontal, vertical and diagonal moves
+        return getDirectionalMoves(Direction.queenMoves, Integer.MAX_VALUE);
     }
 }

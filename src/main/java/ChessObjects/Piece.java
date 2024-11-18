@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public abstract class Piece implements Cloneable {
     protected Board board;
-    protected Point currentPosition;
+    public Point currentPosition;
     protected Team team;
     protected String displayCharacter;
 
@@ -26,21 +26,10 @@ public abstract class Piece implements Cloneable {
         ArrayList<Move> moves = getPossibleMoves();
 
         for (int i = 0; i < moves.size(); i++) {
-            Move move = moves.get(i);
-
-            board.executeMove(move);
-
-            ArrayList<Move> counterMoves = board.getPossibleMoves();
-            //check if any counter move captures the king -> non-legal move
-            for (Move counterMove : counterMoves) {
-                if (counterMove.isKingCaptured()) {
-                    moves.remove(i);
-                    i--;
-                    break;
-                }
+            if (moves.get(i).isIllegalMove()){
+                moves.remove(i);
+                i--;
             }
-
-            board.undoMove(move);
         }
 
         return moves;
@@ -64,7 +53,11 @@ public abstract class Piece implements Cloneable {
 
     //get every move that captures an opponent piece
     public ArrayList<Move> getCaptureMoves(){
-        return (ArrayList<Move>) getPossibleMoves().stream().filter(Move::isCaptureMove).collect(Collectors.toList());
+        return getCaptureMoves(getPossibleMoves());
+    }
+
+    public ArrayList<Move> getCaptureMoves(ArrayList<Move> moves){
+        return (ArrayList<Move>) moves.stream().filter(Move::isCaptureMove).collect(Collectors.toList());
     }
 
     //getting directional moves to a preset maximum depth or the end of the board

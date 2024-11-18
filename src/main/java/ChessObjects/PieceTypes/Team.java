@@ -18,4 +18,11 @@ public enum Team{
     public boolean isEnemy(Team that) {
         return this != that;
     }
+
+    public Team getOpposite(){
+        if (this.isInSameTeam(Team.White))
+            return Team.Black;
+
+        return Team.White;
+    }
 }

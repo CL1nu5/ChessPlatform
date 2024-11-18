@@ -71,11 +71,7 @@ public class Board implements Cloneable{
     /* support methods */
     //switching the active team
     public void switchTeam() {
-        if (activePlayer.isInSameTeam(Team.White))
-            activePlayer = Team.Black;
-
-        else
-            activePlayer = Team.White;
+        activePlayer = activePlayer.getOpposite();
     }
 
     /*position methods*/
