@@ -8,7 +8,6 @@ import junit.framework.TestSuite;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FileEditorTest extends TestCase {
 
@@ -57,5 +56,4 @@ public class FileEditorTest extends TestCase {
         //remove file
         assertTrue(file.delete());
     }
-
 }

@@ -131,6 +131,9 @@ public class Board implements Cloneable{
         return previousMoves.get(previousMoves.size() - 1);
     }
 
+    /* save and load options */
+
+
     /* fundamental objekt methods */
     public boolean isSimilar(Board that) {
         if (that == null) {
