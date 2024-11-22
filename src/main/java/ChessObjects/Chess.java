@@ -21,7 +21,7 @@ public class Chess {
         try {
             String[] vals = coordinates.split("");
             int x = (int) (vals[0].charAt(0)) - 97;
-            int y = Integer.parseInt(vals[1]);
+            int y = 8 - Integer.parseInt(vals[1]);
             return new Point(x, y);
         }
         catch (Exception e){
