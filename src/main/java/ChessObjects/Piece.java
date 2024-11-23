@@ -154,7 +154,7 @@ public abstract class Piece implements Cloneable {
         }
 
 
-        if (this.currentPosition != that.currentPosition) {
+        if (!this.currentPosition.equals(that.currentPosition)) {
             return false;
         }
 

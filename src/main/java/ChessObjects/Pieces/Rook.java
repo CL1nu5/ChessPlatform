@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Rook extends Piece {
 
     public Rook(Point startingPosition, Team team, Board board) {
-        super("R", startingPosition, team, board);
+        super("♖", startingPosition, team, board);
     }
 
     @Override

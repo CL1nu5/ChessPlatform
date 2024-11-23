@@ -1,10 +1,15 @@
 package ChessObjects;
 
 import ChessObjects.PieceTypes.Direction;
+import ChessObjects.Pieces.*;
 import ChessObjects.PieceTypes.Team;
+import Support.FileEditor;
+import Support.StringEditor;
 
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 public class Board implements Cloneable{
@@ -15,9 +20,7 @@ public class Board implements Cloneable{
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     public Board() {
-        pieces = new Piece[8][8]; //8*8 = chess board size -> [y][x]
-        previousMoves = new ArrayList<>();
-        activePlayer = Team.White; //white always starts the game
+        reset(Team.White);
     }
 
     /* execution methods */
@@ -66,6 +69,12 @@ public class Board implements Cloneable{
         }
 
         return moves;
+    }
+
+    public void reset(Team activePlayer){
+        pieces = new Piece[8][8]; //8*8 = chess board size -> [y][x]
+        previousMoves = new ArrayList<>();
+        this.activePlayer = activePlayer; //white always starts the game
     }
 
     /* support methods */
@@ -131,7 +140,80 @@ public class Board implements Cloneable{
         return previousMoves.get(previousMoves.size() - 1);
     }
 
+    /* save and load options */
+    //reads saved position form a json file
+    public void readPosition(File saveFile){
+        //resetting the current position
+        reset(Team.White);
+
+        //file should be a json file
+        if (!saveFile.getPath().endsWith(".json")){
+            logger.warning("board:readPosition - file to read position from isn't a .json file!");
+        }
+
+        //read file content
+        FileEditor fileEditor = new FileEditor();
+        String content = StringEditor.turnJsonListIntoString(fileEditor.read(saveFile));
+
+        //getting pieces and adding them to the board
+        for (Piece piece : getPiecesFromJson(content)){
+            piece.placeOnBoard();
+        }
+    }
+
+    //gets piece information from a json file
+    public ArrayList<Piece> getPiecesFromJson(String json){
+        ArrayList<Piece> readPieces = new ArrayList<>();
+
+        int index = 0;
+        char current;
+
+        while (index < json.length() && (current = json.charAt(index)) != ']'){
+            if (current == '{'){
+                String pieceJson = StringEditor.collectFromTill(++index,'}', json);
+                readPieces.add(getPieceFromHash(getPieceValuesFromJson(pieceJson)));
+
+                index += pieceJson.length() - 1;
+            }
+            index++;
+        }
+
+        return readPieces;
+    }
+
+    //gets all infos of a single piece from a json -> hashmap: type - value
+    public HashMap<String, String> getPieceValuesFromJson(String json){
+        HashMap<String,String> pieceValues = new HashMap<>();
+        String[] components  = json.split(",");
+
+        for (String component : components){
+            String[] parts = component.split(":");
+            pieceValues.put(parts[0], parts[1]);
+        }
+
+        return pieceValues;
+    }
+
+    //gets a piece based of the hash values previous red from the json
+    public Piece getPieceFromHash(HashMap<String, String> pieceHash){
+        try {
+
+            Class<?>[] constructorClasses = new Class[]{Point.class, Team.class, Board.class};
+
+            Object[] constructorValues = new Object[]{
+                    Chess.translateCoordsToPos(pieceHash.get("position")),
+                    pieceHash.get("colour").equals("white") ? Team.White : Team.Black,
+                    this};
+
+            Class<?> cls = Class.forName("ChessObjects.Pieces." + StringEditor.upperFirst(pieceHash.get("piece")));
+            return (Piece) cls.getDeclaredConstructor(constructorClasses).newInstance(constructorValues);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /* fundamental objekt methods */
+    //checks if two boards are similar -> not same references, but still same values
     public boolean isSimilar(Board that) {
         if (that == null) {
             return false;
@@ -149,6 +231,7 @@ public class Board implements Cloneable{
 
     }
 
+    //checks if all pieces on the board are similar, if one piece isn't it returns false
     public boolean arePiecesSimilar(Board that) {
         for (int i = 0; i < pieces.length; i++) {
             for (int j = 0; j < pieces[i].length; j++) {
@@ -161,6 +244,7 @@ public class Board implements Cloneable{
         return true;
     }
 
+    //checks if two pieces are not similar to each other
     public boolean pieceNotSimilar(Piece p1, Piece p2) {
         if (p1 == null && p2 == null) {
             return false;
@@ -170,9 +254,10 @@ public class Board implements Cloneable{
             return true;
         }
 
-        return p1.isSimular(p2);
+        return ! p1.isSimular(p2);
     }
 
+    //returns a detailed state of the board as a string
     public String toString() {
         StringBuilder s = new StringBuilder();
 
@@ -201,6 +286,7 @@ public class Board implements Cloneable{
     //clones ever piece and move.
     @Override
     @SuppressWarnings("unchecked")
+    //creates a new reference with the same values
     public Board clone() {
         try {
             Board clone = (Board) super.clone();
@@ -217,6 +303,7 @@ public class Board implements Cloneable{
         }
     }
 
+    //creates a new reference of all pieces with the same values
     public void clonePieces(Board clone){
         for (int i = 0; i < pieces.length; i++) {
             for (int j = 0; j < pieces[i].length; j++) {
@@ -227,6 +314,7 @@ public class Board implements Cloneable{
         }
     }
 
+    //creates a new previous moves list with the same values
     public void clonePreviousMoves(Board clone){
         for (int i = 0; i < previousMoves.size(); i++){
             clone.previousMoves.add(i, previousMoves.get(i).clone(clone));

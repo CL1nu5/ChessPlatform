@@ -1,4 +1,4 @@
-# Chess Board Documentation
+# ChessObjects.Chess Board Documentation
 ## Filed Notation
 
 The chess board consists out of 64 individual positions in an 8*8 grid.

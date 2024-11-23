@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Knight extends Piece {
 
     public Knight(Point startingPosition, Team team, Board board) {
-        super("Kn", startingPosition, team, board);
+        super("♘", startingPosition, team, board);
     }
 
     @Override

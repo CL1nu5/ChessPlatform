@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Bishop extends Piece{
 
     public Bishop(Point startingPosition, Team team, Board board) {
-        super("B", startingPosition, team, board);
+        super("♗", startingPosition, team, board);
     }
 
     @Override
