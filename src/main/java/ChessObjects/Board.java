@@ -2,10 +2,13 @@ package ChessObjects;
 
 import ChessObjects.PieceTypes.Direction;
 import ChessObjects.PieceTypes.Team;
+import Support.FileEditor;
+import Support.StringEditor;
 
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 public class Board implements Cloneable{
@@ -16,9 +19,7 @@ public class Board implements Cloneable{
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     public Board() {
-        pieces = new Piece[8][8]; //8*8 = chess board size -> [y][x]
-        previousMoves = new ArrayList<>();
-        activePlayer = Team.White; //white always starts the game
+        reset(Team.White);
     }
 
     /* execution methods */
@@ -67,6 +68,12 @@ public class Board implements Cloneable{
         }
 
         return moves;
+    }
+
+    public void reset(Team activePlayer){
+        pieces = new Piece[8][8]; //8*8 = chess board size -> [y][x]
+        previousMoves = new ArrayList<>();
+        this.activePlayer = activePlayer; //white always starts the game
     }
 
     /* support methods */
@@ -133,8 +140,72 @@ public class Board implements Cloneable{
     }
 
     /* save and load options */
-    public void readPosition(File savePoint){
+    //reads saved position form a json file
+    public void readPosition(File saveFile){
+        //resetting the current position
+        reset(Team.White);
 
+        //file should be a json file
+        if (!saveFile.getPath().endsWith(".json")){
+            logger.warning("board:readPosition - file to read position from isn't a .json file!");
+        }
+
+        //read file content
+        FileEditor fileEditor = new FileEditor();
+        String content = StringEditor.turnJsonListIntoString(fileEditor.read(saveFile));
+
+        //getting pieces and adding them to the board
+        for (Piece piece : getPiecesFromJson(content)){
+            piece.placeOnBoard();
+        }
+    }
+
+    public ArrayList<Piece> getPiecesFromJson(String json){
+        ArrayList<Piece> readPieces = new ArrayList<>();
+
+        int index = 0;
+        char current;
+
+        while (index < json.length() && (current = json.charAt(index)) != ']'){
+            if (current == '{'){
+                String pieceJson = StringEditor.collectFromTill(++index,'}', json);
+                readPieces.add(getPieceFromHash(getPieceValuesFromJson(pieceJson)));
+
+                index += pieceJson.length() - 1;
+            }
+            index++;
+        }
+
+        return readPieces;
+    }
+
+    public HashMap<String, String> getPieceValuesFromJson(String json){
+        HashMap<String,String> pieceValues = new HashMap<>();
+        String[] components  = json.split(",");
+
+        for (String component : components){
+            String[] parts = component.split(":");
+            pieceValues.put(parts[0], parts[1]);
+        }
+
+        return pieceValues;
+    }
+    
+    public Piece getPieceFromHash(HashMap<String, String> pieceHash){
+        try {
+
+            Class<?>[] constructorClasses = new Class[]{Point.class, Team.class, Board.class};
+
+            Object[] constructorValues = new Object[]{
+                    Chess.translateCoordsToPos(pieceHash.get("position")),
+                    pieceHash.get("colour").equals("white") ? Team.White : Team.Black,
+                    this};
+
+            Class<?> cls = Class.forName("src/main/java/ChessObjects/" + StringEditor.upperFirst(pieceHash.get("piece")));
+            return (Piece) cls.getDeclaredConstructor(constructorClasses).newInstance(constructorValues);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /* fundamental objekt methods */

@@ -29,4 +29,18 @@ public class StringEditorTest extends TestCase {
         assertEquals(expected, StringEditor.turnJsonListIntoString(fileContent));
     }
 
+    public void testUpperFirst(){
+        //test in case of null
+        assertNull(StringEditor.upperFirst(null));
+
+        //test in case of no letter
+        assertEquals("", StringEditor.upperFirst(""));
+
+        //test in case of one letter
+        assertEquals("H", StringEditor.upperFirst("h"));
+
+        //test normal functionality
+        assertEquals("Hallo", StringEditor.upperFirst("hallo"));
+
+    }
 }
