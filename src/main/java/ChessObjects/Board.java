@@ -254,7 +254,7 @@ public class Board implements Cloneable{
             return true;
         }
 
-        return p1.isSimular(p2);
+        return ! p1.isSimular(p2);
     }
 
     //returns a detailed state of the board as a string
