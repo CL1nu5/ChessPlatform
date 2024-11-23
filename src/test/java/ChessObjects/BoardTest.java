@@ -176,4 +176,23 @@ public class BoardTest extends TestCase {
         //print board
         System.out.println(board);
     }
+
+    public void testStartingPositionPossibleMoves(){
+        Board board = new Board();
+        board.readPosition(new File("save/StartPosition/defaultPosition.json"));
+
+        //there are 20 possible starting positions in chess
+        assertEquals(20, board.getMoves().size());
+
+        //execute random move
+        board.executeMove(board.getMoves().get(8));
+
+        //also black has 20 possible moves to answer
+        assertEquals(20, board.getMoves().size());
+
+        //execute random move, print position and now possible moves
+        board.executeMove(board.getMoves().get(5));
+        System.out.println(board);
+        System.out.println("Possible moves: " + board.getMoves().size());
+    }
 }

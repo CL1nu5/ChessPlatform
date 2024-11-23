@@ -265,7 +265,7 @@ public class Board implements Cloneable{
         for (Piece[] row : pieces) {
             for (Piece piece : row) {
                 if (piece == null)
-                    s.append(" ,");
+                    s.append("　,");
                 else
                     s.append(piece.displayCharacter).append(",");
             }
