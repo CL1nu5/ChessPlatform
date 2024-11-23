@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Queen extends Piece {
 
     public Queen(Point startingPosition, Team team, Board board) {
-        super("Q", startingPosition, team, board);
+        super("♕", startingPosition, team, board);
     }
 
     @Override

@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import java.awt.*;
+import java.io.File;
 
 public class BoardTest extends TestCase {
 
@@ -146,5 +147,11 @@ public class BoardTest extends TestCase {
         board1.undoMove(move);
         assertTrue(board1.isSimilar(board2));
 
+    }
+
+    public void testReadPosition(){
+        Board board = new Board();
+        board.readPosition(new File("save/StartPosition/defaultPosition.json"));
+        System.out.println(board);
     }
 }

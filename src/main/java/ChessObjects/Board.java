@@ -1,6 +1,7 @@
 package ChessObjects;
 
 import ChessObjects.PieceTypes.Direction;
+import ChessObjects.Pieces.*;
 import ChessObjects.PieceTypes.Team;
 import Support.FileEditor;
 import Support.StringEditor;
@@ -190,7 +191,7 @@ public class Board implements Cloneable{
 
         return pieceValues;
     }
-    
+
     public Piece getPieceFromHash(HashMap<String, String> pieceHash){
         try {
 
@@ -201,7 +202,7 @@ public class Board implements Cloneable{
                     pieceHash.get("colour").equals("white") ? Team.White : Team.Black,
                     this};
 
-            Class<?> cls = Class.forName("src/main/java/ChessObjects/" + StringEditor.upperFirst(pieceHash.get("piece")));
+            Class<?> cls = Class.forName("ChessObjects.Pieces." + StringEditor.upperFirst(pieceHash.get("piece")));
             return (Piece) cls.getDeclaredConstructor(constructorClasses).newInstance(constructorValues);
         } catch (Exception e) {
             throw new RuntimeException(e);

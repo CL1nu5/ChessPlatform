@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Pawn extends Piece {
 
     public Pawn(Point startingPosition, Team team, Board board) {
-        super("P", startingPosition, team, board);
+        super("♙", startingPosition, team, board);
     }
 
     @Override
