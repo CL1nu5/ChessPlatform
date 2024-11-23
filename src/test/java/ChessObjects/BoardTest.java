@@ -2,7 +2,10 @@ package ChessObjects;
 
 import ChessObjects.PieceTypes.Direction;
 import ChessObjects.PieceTypes.Team;
+import ChessObjects.Pieces.King;
 import ChessObjects.Pieces.Pawn;
+import ChessObjects.Pieces.Queen;
+import ChessObjects.Pieces.Rook;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -149,9 +152,28 @@ public class BoardTest extends TestCase {
 
     }
 
+    //tests if the position can be read and put into the board
     public void testReadPosition(){
         Board board = new Board();
         board.readPosition(new File("save/StartPosition/defaultPosition.json"));
+
+        //select some random positions to check if they are correct
+        //checking for existence (null), type (queen, pawn, ...), position and team
+        Piece rook = new Rook(new Point(0,0), Team.Black, board);
+        assertTrue(rook.isSimular(board.getPiece(new Point(0,0))));
+
+        Piece king = new King(new Point(4,0), Team.Black, board);
+        assertTrue(king.isSimular(board.getPiece(new Point(4,0))));
+
+        Piece pawn = new Pawn(new Point(1,1), Team.Black, board);
+        assertTrue(pawn.isSimular(board.getPiece(new Point(1,1))));
+
+        Piece queen = new Queen(new Point(3,7), Team.White, board);
+        assertTrue(queen.isSimular(board.getPiece(new Point(3,7))));
+
+        assertNull(board.getPiece(new Point(0,2)));
+
+        //print board
         System.out.println(board);
     }
 }

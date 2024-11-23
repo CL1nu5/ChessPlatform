@@ -161,6 +161,7 @@ public class Board implements Cloneable{
         }
     }
 
+    //gets piece information from a json file
     public ArrayList<Piece> getPiecesFromJson(String json){
         ArrayList<Piece> readPieces = new ArrayList<>();
 
@@ -180,6 +181,7 @@ public class Board implements Cloneable{
         return readPieces;
     }
 
+    //gets all infos of a single piece from a json -> hashmap: type - value
     public HashMap<String, String> getPieceValuesFromJson(String json){
         HashMap<String,String> pieceValues = new HashMap<>();
         String[] components  = json.split(",");
@@ -192,6 +194,7 @@ public class Board implements Cloneable{
         return pieceValues;
     }
 
+    //gets a piece based of the hash values previous red from the json
     public Piece getPieceFromHash(HashMap<String, String> pieceHash){
         try {
 
@@ -210,6 +213,7 @@ public class Board implements Cloneable{
     }
 
     /* fundamental objekt methods */
+    //checks if two boards are similar -> not same references, but still same values
     public boolean isSimilar(Board that) {
         if (that == null) {
             return false;
@@ -227,6 +231,7 @@ public class Board implements Cloneable{
 
     }
 
+    //checks if all pieces on the board are similar, if one piece isn't it returns false
     public boolean arePiecesSimilar(Board that) {
         for (int i = 0; i < pieces.length; i++) {
             for (int j = 0; j < pieces[i].length; j++) {
@@ -239,6 +244,7 @@ public class Board implements Cloneable{
         return true;
     }
 
+    //checks if two pieces are not similar to each other
     public boolean pieceNotSimilar(Piece p1, Piece p2) {
         if (p1 == null && p2 == null) {
             return false;
@@ -251,6 +257,7 @@ public class Board implements Cloneable{
         return p1.isSimular(p2);
     }
 
+    //returns a detailed state of the board as a string
     public String toString() {
         StringBuilder s = new StringBuilder();
 
@@ -279,6 +286,7 @@ public class Board implements Cloneable{
     //clones ever piece and move.
     @Override
     @SuppressWarnings("unchecked")
+    //creates a new reference with the same values
     public Board clone() {
         try {
             Board clone = (Board) super.clone();
@@ -295,6 +303,7 @@ public class Board implements Cloneable{
         }
     }
 
+    //creates a new reference of all pieces with the same values
     public void clonePieces(Board clone){
         for (int i = 0; i < pieces.length; i++) {
             for (int j = 0; j < pieces[i].length; j++) {
@@ -305,6 +314,7 @@ public class Board implements Cloneable{
         }
     }
 
+    //creates a new previous moves list with the same values
     public void clonePreviousMoves(Board clone){
         for (int i = 0; i < previousMoves.size(); i++){
             clone.previousMoves.add(i, previousMoves.get(i).clone(clone));

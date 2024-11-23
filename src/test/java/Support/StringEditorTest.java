@@ -29,6 +29,7 @@ public class StringEditorTest extends TestCase {
         assertEquals(expected, StringEditor.turnJsonListIntoString(fileContent));
     }
 
+    //turning the first letter of a string upper case: hello -> Hello
     public void testUpperFirst(){
         //test in case of null
         assertNull(StringEditor.upperFirst(null));
