@@ -107,8 +107,7 @@ public class Move implements Cloneable{
     /* fundamental objekt methods */
     public String toString() {
         return "{movingP: " + movingPiece + "; capturedP: " + capturedPiece + "; previousP: " + previousPosition
-                + "; postponedP: " + postponedPosition + "; connected Move: " + connectedMove
-                + "; board: " + board + "}";
+                + "; postponedP: " + postponedPosition + "; connected Move: " + connectedMove + "}";
     }
 
     public boolean isSimular(Move that) {
