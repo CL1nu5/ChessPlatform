@@ -4,6 +4,7 @@ import ChessObjects.PieceTypes.Direction;
 import ChessObjects.PieceTypes.Team;
 
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -132,7 +133,9 @@ public class Board implements Cloneable{
     }
 
     /* save and load options */
+    public void readPosition(File savePoint){
 
+    }
 
     /* fundamental objekt methods */
     public boolean isSimilar(Board that) {

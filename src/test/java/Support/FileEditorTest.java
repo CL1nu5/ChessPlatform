@@ -22,7 +22,7 @@ public class FileEditorTest extends TestCase {
     public void testFileGetsCreatedWriter(){
         //setup
         String[] text = {"Hallo das ist der einzige deutsche Satz in diesem Code", "Verarscht, das ist auch einer haha"};
-        File file = new File("save/test.txt");
+        File file = new File("save/test/test.txt");
         FileEditor editor = new FileEditor();
 
         //file shouldn't exist before the test
@@ -39,7 +39,7 @@ public class FileEditorTest extends TestCase {
     public void testWriteAndRead(){
         //setup
         String[] text = {"Hallo, das ist der einzige deutsche Satz in diesem Code", "Verarscht, das ist auch einer haha"};
-        File file = new File("save/test.txt");
+        File file = new File("save/test/test.txt");
         FileEditor editor = new FileEditor();
 
         //write text in file
