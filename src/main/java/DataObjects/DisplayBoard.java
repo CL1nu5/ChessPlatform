@@ -54,12 +54,16 @@ public class DisplayBoard {
         return new Point(startX + fieldLength * x, startY + fieldLength * y);
     }
 
+    public Point getScaledPosition(Point pos, double scale){
+        return new Point(pos.x  + (int) (fieldLength * (1 - scale)) / 2, pos.y  + (int) (fieldLength * (1 - scale)) / 2);
+    }
+
     public Point getStringStartingPos(int indexX, int indexY, String string, Font font){
         Point filedPos = getIndexPosition(indexX, indexY);
         Dimension stringSize = StringEditor.getStringSize(string, font);
 
         int x = filedPos.x + (fieldLength - stringSize.width) / 2;
-        int y = filedPos.y + stringSize.height;
+        int y = filedPos.y + fieldLength - (fieldLength - stringSize.height) / 2;
 
         return new Point(x, y);
     }

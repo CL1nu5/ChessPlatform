@@ -57,7 +57,7 @@ public class StringEditor {
         FontRenderContext frc = new FontRenderContext(af, true, true);
         Rectangle2D bounds = font.getStringBounds(string, frc);
 
-        return new Dimension((int) bounds.getWidth(), (int) bounds.getHeight());
+        return new Dimension((int) bounds.getWidth(), (int) bounds.getHeight() / 2);
     }
 
     //getting the perfect sized via binary search for a given box
