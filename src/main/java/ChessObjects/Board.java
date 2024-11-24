@@ -1,7 +1,6 @@
 package ChessObjects;
 
 import ChessObjects.PieceTypes.Direction;
-import ChessObjects.Pieces.*;
 import ChessObjects.PieceTypes.Team;
 import Support.FileEditor;
 import Support.StringEditor;
