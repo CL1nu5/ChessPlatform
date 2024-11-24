@@ -1,6 +1,7 @@
 package Main;
 
 import ChessObjects.Board;
+import ChessObjects.PieceTypes.Team;
 import GUI.ChessPanel;
 import GUI.Frame;
 
@@ -15,6 +16,6 @@ public class Main {
         Board board = new Board();
         board.readPosition(new File("save/StartPosition/defaultPosition.json"));
 
-        new ChessPanel(frame, board, new Dimension(1000, 800));
+        new ChessPanel(frame, board, new Dimension(1000, 800), Team.White);
     }
 }

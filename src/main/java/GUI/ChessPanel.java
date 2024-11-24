@@ -2,6 +2,7 @@ package GUI;
 
 import ChessObjects.Board;
 import ChessObjects.Chess;
+import ChessObjects.PieceTypes.Team;
 import DataObjects.DisplayBoard;
 import Support.StringEditor;
 
@@ -22,11 +23,13 @@ public class ChessPanel extends JPanel {
     private Frame frame;
 
     private Board chessBoard;
+    private Team direction;
     private Dimension displaySize;
 
-    public ChessPanel(Frame frame, Board chessBoard, Dimension displaySize){
+    public ChessPanel(Frame frame, Board chessBoard, Dimension displaySize, Team direction){
         this.chessBoard = chessBoard;
         this.displaySize = displaySize;
+        this.direction = direction;
 
         this.setPreferredSize(displaySize);
         this.setOpaque(true);
@@ -61,39 +64,48 @@ public class ChessPanel extends JPanel {
 
                 //rim
                 if (sizes.isInRim(boardPosition)){
-                    //print pox
-                    g.setColor(RIM_COLOR);
-                    g.fillRect(boardPosition.x, boardPosition.y, sizes.fieldLength, sizes.fieldLength);
-
-                    //print text
-                    //character selection
-                    int val = -1;
-                    if (sizes.isInXRim(boardPosition) && ! sizes.isInYRim(boardPosition))
-                        val = 1;
-                    else if (!sizes.isInXRim(boardPosition) && sizes.isInYRim(boardPosition)) {
-                        val = 0;
-                    }
-
-                    if (val != -1){
-                        String character = String.valueOf(Objects.requireNonNull(
-                                Chess.translatePosToCoords(new Point(x - 1, y - 1))).charAt(val));
-                        Point pos = sizes.getStringStartingPos(x, y, character, font);
-
-                        g.setColor(TEXT_COLOR);
-                        g.drawString(character, pos.x, pos.y);
-                    }
+                    paintRim(g, x, y, boardPosition, sizes, font);
+                    continue;
                 }
 
                 //not rim
-                else {
-                    if ((x + y) % 2 == 0)
-                        g.setColor(LIGHT_COLOR);
-                    else
-                        g.setColor(DARK_COLOR);
-
-                    g.fillRect(boardPosition.x, boardPosition.y, sizes.fieldLength, sizes.fieldLength);
-                }
+                paintFields(g, x, y, boardPosition, sizes);
             }
         }
+    }
+
+    public void paintRim(Graphics2D g, int x, int y, Point boardPosition, DisplayBoard sizes, Font font){
+        //print pox
+        g.setColor(RIM_COLOR);
+        g.fillRect(boardPosition.x, boardPosition.y, sizes.fieldLength, sizes.fieldLength);
+
+        //print text
+        //character selection
+        int val = -1;
+        if (sizes.isInXRim(boardPosition) && ! sizes.isInYRim(boardPosition))
+            val = 1;
+        else if (!sizes.isInXRim(boardPosition) && sizes.isInYRim(boardPosition)) {
+            val = 0;
+        }
+
+        if (val != -1){
+            int dv = direction.value;
+            String character = String.valueOf(Objects.requireNonNull(
+                    Chess.translatePosToCoords(sizes.getDirectionPos(x - dv, y - dv, direction))).charAt(val));
+            Point pos = sizes.getStringStartingPos(x, y, character, font);
+
+            g.setColor(TEXT_COLOR);
+            g.drawString(character, pos.x, pos.y);
+        }
+    }
+
+    public void paintFields(Graphics2D g, int x, int y, Point boardPosition, DisplayBoard sizes){
+        //position doesn't need to be aligned in a direction, because it is the same for both
+        if ((x + y) % 2 == 0)
+            g.setColor(LIGHT_COLOR);
+        else
+            g.setColor(DARK_COLOR);
+
+        g.fillRect(boardPosition.x, boardPosition.y, sizes.fieldLength, sizes.fieldLength);
     }
 }

@@ -1,6 +1,7 @@
 package DataObjects;
 
 import ChessObjects.Board;
+import ChessObjects.PieceTypes.Team;
 import Support.StringEditor;
 
 import java.awt.*;
@@ -77,6 +78,14 @@ public class DisplayBoard {
 
     public int getMaxY(){
         return startY + fieldLength * fieldCount;
+    }
+
+    public Point getDirectionPos(int x, int y, Team direction){
+        if (direction == Team.White){
+            return new Point(x,y);
+        }
+
+        return new Point(fieldCount - x - 1, fieldCount - y - 1);
     }
 
     /* size getter */
