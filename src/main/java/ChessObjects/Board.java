@@ -128,6 +128,10 @@ public class Board implements Cloneable{
 
     /* information methods / getter */
     public Piece getPiece(Point position) {
+        if (position == null){
+            return null;
+        }
+
         return pieces[position.y][position.x];
     }
 

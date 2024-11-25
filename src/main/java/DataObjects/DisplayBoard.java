@@ -85,10 +85,24 @@ public class DisplayBoard {
     }
 
     public Point getDirectionPos(int x, int y, Team direction){
+        x -= direction.value;
+        y -= direction.value;
+
         if (direction == Team.White){
             return new Point(x,y);
         }
 
+        return new Point(fieldCount - x - 1, fieldCount - y - 1);
+    }
+
+    public Point getActualPos(int x, int y, Team direction){
+        x -= direction.value;
+        y -= direction.value;
+
+        if (direction == Team.White){
+            return new Point(x + 2,y + 2);
+        }
+        System.out.println(x +"," + y);
         return new Point(fieldCount - x - 1, fieldCount - y - 1);
     }
 
