@@ -31,4 +31,10 @@ public class TeamTest extends TestCase {
         Team team1 = Team.White;
         assertTrue(team1.isInSameTeam(Team.White));
     }
+
+    //tests if the to string display is correct
+    public void testToString(){
+        assertEquals("White", Team.White.toString());
+        assertEquals("Black", Team.Black.toString());
+    }
 }

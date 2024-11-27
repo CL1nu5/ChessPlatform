@@ -51,4 +51,11 @@ public class PieceTest extends TestCase {
         assertFalse(piece2.setPosition(new Point(7, 7)));
     }
 
+    public void testGetPieceType(){
+        Board board = new Board();
+        Piece pawn = new Pawn(new Point(0,0), Team.White, board);
+
+        assertEquals("Pawn", pawn.getClass().getSimpleName());
+    }
+
 }

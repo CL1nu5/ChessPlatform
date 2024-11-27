@@ -1,7 +1,6 @@
 package ChessObjects;
 
 import ChessObjects.PieceTypes.Direction;
-import ChessObjects.Pieces.*;
 import ChessObjects.PieceTypes.Team;
 import Support.FileEditor;
 import Support.StringEditor;
@@ -129,6 +128,10 @@ public class Board implements Cloneable{
 
     /* information methods / getter */
     public Piece getPiece(Point position) {
+        if (position == null){
+            return null;
+        }
+
         return pieces[position.y][position.x];
     }
 

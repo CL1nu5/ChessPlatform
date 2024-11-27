@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 public abstract class Piece implements Cloneable {
     protected Board board;
     public Point currentPosition;
-    protected Team team;
-    protected String displayCharacter;
+    public Team team;
+    public String displayCharacter;
 
     public Piece(String displayCharacter, Point startingPosition, Team team, Board board) {
         this.currentPosition = startingPosition;
