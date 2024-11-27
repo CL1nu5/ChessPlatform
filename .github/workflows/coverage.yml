@@ -31,7 +31,7 @@ jobs:
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          token: ${{ c7188293-2338-4633-a4e8-b514e42f71ac }}
+          token: ${{c7188293-2338-4633-a4e8-b514e42f71ac}}
           files: ./target/site/jacoco/jacoco.xml
           flags: unittests
           fail_ci_if_error: true
