@@ -1,4 +1,4 @@
-name: Code Coverage with Codecov
+name: Java CI with Coverage
 
 on:
   push:
@@ -9,29 +9,29 @@ on:
       - main
 
 jobs:
-  build-and-coverage:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
+      # Set up JDK
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: mvn install -DskipTests
 
-      - name: Run Tests and Generate Coverage
+      - name: Run tests and generate coverage report
         run: mvn verify
 
-      - name: Upload Coverage to Codecov
+      - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          token: ${{c7188293-2338-4633-a4e8-b514e42f71ac}}
-          files: ./target/site/jacoco/jacoco.xml
+          file: ./target/site/jacoco/jacoco.xml
           flags: unittests
           fail_ci_if_error: true
