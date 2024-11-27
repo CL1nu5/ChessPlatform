@@ -29,9 +29,13 @@ jobs:
       - name: Run tests and generate coverage report
         run: mvn verify
 
+      - name: List files for debugging
+        run: ls -R ./target/site/jacoco
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           file: ./target/site/jacoco/jacoco.xml
           flags: unittests
           fail_ci_if_error: true
+          verbose: true
