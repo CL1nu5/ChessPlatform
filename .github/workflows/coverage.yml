@@ -34,11 +34,11 @@ jobs:
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
-          token: ${{ secrets.CODECOV_TOKEN }} # Codecov token securely stored in GitHub Secrets
+          token: ${{ secrets.CODECOV_TOKEN }}
           slug: CL1nu5/ChessPlatform
-          files: ./target/site/jacoco/jacoco.xml # Path to the JaCoCo XML report
-          flags: unittests # Optional flag for categorizing coverage
-          fail_ci_if_error: true # Fail the workflow if upload fails
-          verbose: true # Enable detailed logging
-          comment: true # Add a comment to pull requests with coverage details
-          commit_parent: true # Ensure association with the pull request commit
+          files: ./target/site/jacoco/jacoco.xml
+          flags: unittests
+          fail_ci_if_error: true
+          verbose: true
+          comment: true
+          commit_parent: true
