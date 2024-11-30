@@ -1,15 +1,20 @@
 package GUI;
 
 import ChessObjects.Board;
+import ChessObjects.Move;
 import ChessObjects.Piece;
 import ChessObjects.PieceTypes.Team;
+import Client.Client;
 import DataObjects.DisplayBoard;
 import DataObjects.PointComparator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
-public class ChessPanel extends JPanel {
+public class ChessPanel extends JPanel implements MouseListener, MouseMotionListener {
     //Constants
     private final Color LIGHT_COLOR = new Color(216, 243, 220);
     private final Color DARK_COLOR = new Color(149, 213, 178);
@@ -30,8 +35,12 @@ public class ChessPanel extends JPanel {
     Team direction;
     Piece selectedPiece, grabbedPiece;
 
-    public ChessPanel(Frame frame, Dimension displaySize, Board chessBoard, Team direction){
+    //Communication
+    Client client;
+
+    public ChessPanel(Frame frame, Client client, Dimension displaySize, Board chessBoard, Team direction) {
         this.frame = frame;
+        this.client = client;
         this.chessBoard = chessBoard;
         this.direction = direction;
         this.displaySize = displaySize;
@@ -40,11 +49,14 @@ public class ChessPanel extends JPanel {
         this.setOpaque(true);
         this.setBackground(BACKGROUND_COLOR);
 
+        this.addMouseListener(this);
+        this.addMouseMotionListener(this);
+
         frame.switchPanel(this);
     }
 
     /* paint methods */
-    public void paint(Graphics g){
+    public void paint(Graphics g) {
         super.paint(g);
 
         Graphics2D g2d = (Graphics2D) g;
@@ -54,20 +66,19 @@ public class ChessPanel extends JPanel {
     }
 
     //painting gameObjects in correct drawing order
-    private void paintBoard(Graphics2D g){
+    private void paintBoard(Graphics2D g) {
         paintField(g);
         paintRim(g);
     }
 
-    private void paintField(Graphics2D g){
+    private void paintField(Graphics2D g) {
         DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
 
-        for (PointComparator pc: sizes.getFieldPositions(direction)){
+        for (PointComparator pc : sizes.getFieldPositions(direction)) {
             //select color
-            if ((pc.from.x + pc.from.y) % 2 == 0){
+            if ((pc.from.x + pc.from.y) % 2 == 0) {
                 g.setColor(LIGHT_COLOR);
-            }
-            else {
+            } else {
                 g.setColor(DARK_COLOR);
             }
 
@@ -76,10 +87,10 @@ public class ChessPanel extends JPanel {
         }
     }
 
-    private void paintRim(Graphics2D g){
+    private void paintRim(Graphics2D g) {
         DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
 
-        for (PointComparator pc: sizes.getRimPositions()){
+        for (PointComparator pc : sizes.getRimPositions()) {
             //paint rim square
             g.setColor(RIM_COLOR);
             g.fillRect(pc.to.x, pc.to.y, sizes.fieldLength, sizes.fieldLength);
@@ -96,43 +107,148 @@ public class ChessPanel extends JPanel {
         }
     }
 
-    private void paintSelection(Graphics2D g){
+    private void paintSelection(Graphics2D g) {
+        if (selectedPiece == null) {
+            return;
+        }
 
-    }
-
-    private void paintPieces(Graphics2D g){
         DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
+        paintField(g, sizes, selectedPiece.currentPosition, SELECTED_PIECE_COLOR);
 
-        for (int y = 0; y < chessBoard.pieces.length; y++){
-            for (int x = 0; x < chessBoard.pieces[y].length; x++){
-                //getting hte piece
-                Piece piece = chessBoard.getPiece(new Point(x, y));
+        for (Move move : client.getPossibleMoves(selectedPiece)) {
+            if (move.isCaptureMove()) {
+                paintField(g, sizes, move.postponedPosition, CAPTURE_MOVE_COLOR);
+            } else {
+                Point realPos = sizes.getRealPositionOfDirectionalFieldSquare(move.postponedPosition, direction);
+                g.setColor(MOVE_COLOR);
 
-                //checking if piece can be painted
-                if (piece == null){
-                    continue;
-                }
-
-                if (piece == grabbedPiece){
-                    continue;
-                }
-
-                double scale = 0.75; // 75% of grid size
-                paintPiece(g, sizes, piece, scale, true);
+                Rectangle bounds = sizes.getScaledBounds(realPos, 0.6);
+                g.fillOval(bounds.x, bounds.y, bounds.width, bounds.height);
             }
         }
     }
 
-    private void paintPiece(Graphics2D g, DisplayBoard sizes, Piece piece, double scale, boolean gridlocked){
-        Point position = sizes.getRealPositionOfDirectionalFieldSquare(piece.currentPosition, direction);
-        Rectangle bounds = sizes.getScaledBounds(position, scale);
+    public void paintField(Graphics2D g, DisplayBoard sizes, Point fieldPos, Color color) {
+        Point realPos = sizes.getRealPositionOfDirectionalFieldSquare(fieldPos, direction);
 
-        if (!gridlocked){
-            bounds.setLocation(bounds.x - bounds.width / 2, bounds.y - bounds.height / 2);
+        g.setColor(color);
+        g.fillRect(realPos.x, realPos.y, sizes.fieldLength, sizes.fieldLength);
+    }
+
+    private void paintPieces(Graphics2D g) {
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
+
+        for (int y = 0; y < chessBoard.pieces.length; y++) {
+            for (int x = 0; x < chessBoard.pieces[y].length; x++) {
+                //getting hte piece
+                Piece piece = chessBoard.getPiece(new Point(x, y));
+
+                //checking if piece can be painted
+                if (piece == null) {
+                    continue;
+                }
+
+                if (piece == grabbedPiece) {
+                    continue;
+                }
+
+                double scale = 0.75; // 75% of grid size
+                paintPiece(g, sizes, piece, null, scale, true);
+            }
+        }
+
+        if (grabbedPiece != null){
+            double scale = 0.75; // 75% of grid size
+            paintPiece(g, sizes, grabbedPiece, mousePos, scale, false);
+        }
+    }
+
+    private void paintPiece(Graphics2D g, DisplayBoard sizes, Piece piece, Point piecePos, double scale, boolean gridlocked) {
+        if (piecePos == null){
+            piecePos = sizes.getRealPositionOfDirectionalFieldSquare(piece.currentPosition, direction);
+        }
+
+        Rectangle bounds = sizes.getScaledBounds(piecePos, scale);
+
+        if (!gridlocked) {
+            bounds.setLocation(piecePos.x - bounds.width / 2, piecePos.y - bounds.height / 2);
         }
 
         Image pieceImage = new ImageIcon(
                 "res/ChessPieces/" + piece.team + "/" + piece.getClass().getSimpleName() + ".png").getImage();
         g.drawImage(pieceImage, bounds.x, bounds.y, bounds.width, bounds.height, null);
+    }
+
+    /* mouse listener methods - needed */
+    @Override
+    public void mousePressed(MouseEvent e) {
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
+        mousePos = e.getPoint();
+
+        Point fieldPos = sizes.getDirectionalFieldSquare(mousePos, direction);
+        if (fieldPos == null){
+            return;
+        }
+
+        Piece piece = chessBoard.getPiece(fieldPos);
+        if (piece != null && piece.team.isInSameTeam(chessBoard.activePlayer)){
+            selectedPiece = piece;
+            grabbedPiece = piece;
+        }
+
+        repaint();
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
+        mousePos = e.getPoint();
+
+        grabbedPiece = null;
+        repaint();
+
+        Point fieldPos = sizes.getDirectionalFieldSquare(mousePos, direction);
+        if (selectedPiece == null || fieldPos == null){
+            return;
+        }
+        if (selectedPiece.currentPosition.equals(fieldPos)){
+            return;
+        }
+
+        for (Move move : client.getPossibleMoves(selectedPiece)){
+            if (fieldPos.equals(move.postponedPosition)){
+                client.executeMove(move);
+            }
+        }
+
+        selectedPiece = null;
+        repaint();
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        mousePos = e.getPoint();
+        repaint();
+    }
+
+    /* mouse listener methods - not needed */
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
     }
 }
