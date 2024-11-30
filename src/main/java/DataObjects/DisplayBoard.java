@@ -1,9 +1,12 @@
 package DataObjects;
 
+import ChessObjects.Chess;
 import ChessObjects.PieceTypes.Team;
+import Support.StringEditor;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class DisplayBoard {
     //values
@@ -39,6 +42,7 @@ public class DisplayBoard {
             for (int x = 0; x < fieldCount; x += (fieldCount - 1)){
                 PointComparator compare = new PointComparator(new Point(x, y),
                         getRealPositionOfSquare(new Point(x, y)));
+                positions.add(compare);
             }
         }
 
@@ -83,11 +87,15 @@ public class DisplayBoard {
             return false;
         }
 
-        if (pos.x == 0 || pos.x == fieldCount - 1){
-            return true;
-        }
+        return isInXRim(pos) || isInYRim(pos);
+    }
 
+    public boolean isInXRim(Point pos){
         return pos.y == 0 || pos.y == fieldCount - 1;
+    }
+
+    public boolean isInYRim(Point pos){
+        return pos.x == 0 || pos.x == fieldCount - 1;
     }
 
     private boolean isInField(Point pos){
@@ -137,7 +145,7 @@ public class DisplayBoard {
             return fieldSquarePos;
         }
 
-        return new Point(7 - fieldSquarePos.x, 7 - fieldSquarePos.y);
+        return getMirroredFieldPosition(fieldSquarePos);
     }
 
     /* conversion getter - they all take square / field positions */
@@ -165,10 +173,44 @@ public class DisplayBoard {
         }
 
         if (direction.isInSameTeam(Team.Black)){
-            pos = new Point(7 - pos.x, 7 - pos.y);
+            pos = getMirroredFieldPosition(pos);
         }
 
         return getRealPositionOfFieldSquare(pos);
+    }
+
+    /* mirror getter */
+    public Point getMirroredFieldPosition(Point pos){
+        return new Point(7 - pos.x, 7 - pos.y);
+    }
+
+    /* string getter */
+    public String getRimChar(Point squarePos,Team direction){
+        if (isInXRim(squarePos) && isInYRim(squarePos)){
+            return "";
+        }
+
+        int charPosition = 0;
+        if (isInYRim(squarePos)){
+            charPosition = 1;
+        }
+
+        Point fieldPos = new Point(squarePos.x - 1, squarePos.y - 1);
+
+        if (direction.isInSameTeam(Team.Black)){
+            fieldPos = getMirroredFieldPosition(fieldPos);
+        }
+
+        return String.valueOf(Objects.requireNonNull(Chess.translatePosToCoords(fieldPos)).charAt(charPosition));
+    }
+
+    public Point getStringStartingPosition(Point realPosition, String string, Font font){
+        Dimension stringSize = StringEditor.getStringSize(string, font);
+
+        int x = realPosition.x + (fieldLength - stringSize.width) / 2;
+        int y = realPosition.y + fieldLength - (fieldLength - stringSize.height) / 2;
+
+        return new Point(x, y);
     }
 
     /* playing field basic getter */

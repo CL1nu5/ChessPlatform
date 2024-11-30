@@ -3,7 +3,7 @@ This is a little chess projekt I work on myself. In the future it should include
 
 ## How to play it?
 To play it just execute te following java file:
-[main.java](src/main/java/Main/Main.java)
+[mainClient.java](src/main/java/Main/MainClient.java)
 
 ## Overview
 This is how the game looks like:
