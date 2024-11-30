@@ -1,16 +1,18 @@
 package GUI;
 
-import ChessObjects.*;
+import ChessObjects.Board;
+import ChessObjects.Move;
+import ChessObjects.Piece;
 import ChessObjects.PieceTypes.Team;
+import Client.Client;
 import DataObjects.DisplayBoard;
-import Support.StringEditor;
+import DataObjects.PointComparator;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.Objects;
 
 public class ChessPanel extends JPanel implements MouseListener, MouseMotionListener {
     //Constants
@@ -23,26 +25,30 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
     private final Color MOVE_COLOR = new Color(64, 145, 108);
     private final Color CAPTURE_MOVE_COLOR = new Color(27, 67, 50);
 
-
-    //gui-Objects
-    private Frame frame;
+    //JObjects
+    Frame frame;
+    Dimension displaySize;
     Point mousePos;
 
-    private Board chessBoard;
-    private Team direction;
-    private Dimension displaySize;
-    private Piece selectedPiece, grabbedPiece;
+    //GameObjects
+    Board chessBoard;
+    Team direction;
+    Piece selectedPiece, grabbedPiece;
 
-    public ChessPanel(Frame frame, Board chessBoard, Dimension displaySize, Team direction) {
+    //Communication
+    Client client;
+
+    public ChessPanel(Frame frame, Client client, Dimension displaySize, Board chessBoard, Team direction) {
+        this.frame = frame;
+        this.client = client;
         this.chessBoard = chessBoard;
-        this.displaySize = displaySize;
         this.direction = direction;
-        this.selectedPiece = null;
-        this.grabbedPiece = null;
+        this.displaySize = displaySize;
 
         this.setPreferredSize(displaySize);
         this.setOpaque(true);
         this.setBackground(BACKGROUND_COLOR);
+
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
 
@@ -54,165 +60,137 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
         super.paint(g);
 
         Graphics2D g2d = (Graphics2D) g;
-
-        //paint all objects
         paintBoard(g2d);
-        printSelection(g2d);
+        paintSelection(g2d);
         paintPieces(g2d);
     }
 
-    //prints the board and rim in the center of the chess panel
-    public void paintBoard(Graphics2D g) {
-        DisplayBoard sizes = new DisplayBoard(displaySize, chessBoard);
+    //painting gameObjects in correct drawing order
+    private void paintBoard(Graphics2D g) {
+        paintField(g);
+        paintRim(g);
+    }
 
-        //get perfect font for field size : string is a placeholder of 1 character
-        Font font = StringEditor.getPerfectSizedFont(
-                "Serif", " ", sizes.getFieldSize(), 12, 50);
-        g.setFont(font);
+    private void paintField(Graphics2D g) {
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
 
-        for (int y = 0; y < sizes.fieldCount; y++) {
-            for (int x = 0; x < sizes.fieldCount; x++) {
-                //getting current position on board
-                Point boardPosition = sizes.getIndexPosition(x, y);
+        for (PointComparator pc : sizes.getFieldPositions(direction)) {
+            //select color
+            if ((pc.from.x + pc.from.y) % 2 == 0) {
+                g.setColor(LIGHT_COLOR);
+            } else {
+                g.setColor(DARK_COLOR);
+            }
 
-                //rim
-                if (sizes.isInRim(boardPosition)) {
-                    paintRim(g, x, y, boardPosition, sizes, font);
+            //paint field
+            g.fillRect(pc.to.x, pc.to.y, sizes.fieldLength, sizes.fieldLength);
+        }
+    }
+
+    private void paintRim(Graphics2D g) {
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
+
+        for (PointComparator pc : sizes.getRimPositions()) {
+            //paint rim square
+            g.setColor(RIM_COLOR);
+            g.fillRect(pc.to.x, pc.to.y, sizes.fieldLength, sizes.fieldLength);
+
+            //paint text
+            Font font = new Font("Serif", Font.PLAIN, 40);
+            g.setFont(font);
+
+            String character = sizes.getRimChar(pc.from, direction);
+            Point stringPosition = sizes.getStringStartingPosition(pc.to, character, g.getFont());
+
+            g.setColor(TEXT_COLOR);
+            g.drawString(character, stringPosition.x, stringPosition.y);
+        }
+    }
+
+    private void paintSelection(Graphics2D g) {
+        if (selectedPiece == null) {
+            return;
+        }
+
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
+        paintField(g, sizes, selectedPiece.currentPosition, SELECTED_PIECE_COLOR);
+
+        for (Move move : client.getPossibleMoves(selectedPiece)) {
+            if (move.isCaptureMove()) {
+                paintField(g, sizes, move.postponedPosition, CAPTURE_MOVE_COLOR);
+            } else {
+                Point realPos = sizes.getRealPositionOfDirectionalFieldSquare(move.postponedPosition, direction);
+                g.setColor(MOVE_COLOR);
+
+                Rectangle bounds = sizes.getScaledBounds(realPos, 0.6);
+                g.fillOval(bounds.x, bounds.y, bounds.width, bounds.height);
+            }
+        }
+    }
+
+    public void paintField(Graphics2D g, DisplayBoard sizes, Point fieldPos, Color color) {
+        Point realPos = sizes.getRealPositionOfDirectionalFieldSquare(fieldPos, direction);
+
+        g.setColor(color);
+        g.fillRect(realPos.x, realPos.y, sizes.fieldLength, sizes.fieldLength);
+    }
+
+    private void paintPieces(Graphics2D g) {
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
+
+        for (int y = 0; y < chessBoard.pieces.length; y++) {
+            for (int x = 0; x < chessBoard.pieces[y].length; x++) {
+                //getting hte piece
+                Piece piece = chessBoard.getPiece(new Point(x, y));
+
+                //checking if piece can be painted
+                if (piece == null) {
                     continue;
                 }
 
-                //not rim
-                paintFields(g, x, y, boardPosition, sizes);
-            }
-        }
-    }
-
-    public void paintRim(Graphics2D g, int x, int y, Point boardPosition, DisplayBoard sizes, Font font) {
-        //print pox
-        g.setColor(RIM_COLOR);
-        g.fillRect(boardPosition.x, boardPosition.y, sizes.fieldLength, sizes.fieldLength);
-
-        //print text
-        //character selection
-        int val = -1;
-        if (sizes.isInXRim(boardPosition) && !sizes.isInYRim(boardPosition))
-            val = 1;
-        else if (!sizes.isInXRim(boardPosition) && sizes.isInYRim(boardPosition)) {
-            val = 0;
-        }
-
-        if (val != -1) {
-            String character = String.valueOf(Objects.requireNonNull(
-                    Chess.translatePosToCoords(sizes.getDirectionPos(x, y, direction))).charAt(val));
-            Point pos = sizes.getStringStartingPos(x, y, character, font);
-
-            g.setColor(TEXT_COLOR);
-            g.drawString(character, pos.x, pos.y);
-        }
-    }
-
-    public void paintFields(Graphics2D g, int x, int y, Point boardPosition, DisplayBoard sizes) {
-        //position doesn't need to be aligned in a direction, because it is the same for both
-        if ((x + y) % 2 == 0)
-            g.setColor(LIGHT_COLOR);
-        else
-            g.setColor(DARK_COLOR);
-
-        g.fillRect(boardPosition.x, boardPosition.y, sizes.fieldLength, sizes.fieldLength);
-    }
-
-    public void paintPieces(Graphics2D g) {
-        DisplayBoard sizes = new DisplayBoard(displaySize, chessBoard);
-
-        for (int y = 0; y < sizes.fieldCount; y++) {
-            for (int x = 0; x < sizes.fieldCount; x++) {
-                Point boardPosition = sizes.getIndexPosition(x, y);
-
-                if (sizes.isInBoard(boardPosition)) {
-                    double scale = 0.75; // scales the pieces to 75% of the field
-                    Piece piece = chessBoard.getPiece(sizes.getDirectionPos(x, y, direction));
-
-                    if (piece == grabbedPiece){
-                        continue;
-                    }
-
-                    paintPiece(g, sizes, boardPosition, scale, piece, true);
+                if (piece == grabbedPiece) {
+                    continue;
                 }
+
+                double scale = 0.75; // 75% of grid size
+                paintPiece(g, sizes, piece, null, scale, true);
             }
         }
 
-        if (grabbedPiece != null && mousePos != null){
-            paintPiece(g, sizes, mousePos , 0.75, grabbedPiece, false);
+        if (grabbedPiece != null){
+            double scale = 0.75; // 75% of grid size
+            paintPiece(g, sizes, grabbedPiece, mousePos, scale, false);
         }
     }
 
-    public void paintPiece(Graphics2D g, DisplayBoard sizes, Point boardPosition, double scale, Piece piece, boolean gridLocked) {
-        if (piece == null){
-            return;
+    private void paintPiece(Graphics2D g, DisplayBoard sizes, Piece piece, Point piecePos, double scale, boolean gridlocked) {
+        if (piecePos == null){
+            piecePos = sizes.getRealPositionOfDirectionalFieldSquare(piece.currentPosition, direction);
         }
 
-        Dimension imageSize = sizes.getScaledFiledSize(scale);
+        Rectangle bounds = sizes.getScaledBounds(piecePos, scale);
 
-        if (gridLocked)
-            boardPosition = sizes.getScaledPosition(boardPosition, scale);
-        else
-            boardPosition = new Point(boardPosition.x - imageSize.width / 2, boardPosition.y - imageSize.height / 2);
+        if (!gridlocked) {
+            bounds.setLocation(piecePos.x - bounds.width / 2, piecePos.y - bounds.height / 2);
+        }
 
         Image pieceImage = new ImageIcon(
                 "res/ChessPieces/" + piece.team + "/" + piece.getClass().getSimpleName() + ".png").getImage();
-        g.drawImage(pieceImage, boardPosition.x, boardPosition.y, imageSize.width, imageSize.height, null);
+        g.drawImage(pieceImage, bounds.x, bounds.y, bounds.width, bounds.height, null);
     }
 
-    public void printSelection(Graphics2D g){
-        DisplayBoard sizes = new DisplayBoard(displaySize, chessBoard);
-        if (selectedPiece == null){
+    /* mouse listener methods - needed */
+    @Override
+    public void mousePressed(MouseEvent e) {
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
+        mousePos = e.getPoint();
+
+        Point fieldPos = sizes.getDirectionalFieldSquare(mousePos, direction);
+        if (fieldPos == null){
             return;
         }
 
-        Point pos = selectedPiece.currentPosition;
-        paintField(g, pos.x, pos.y, sizes, SELECTED_PIECE_COLOR);
-
-        paintMoves(g, sizes);
-    }
-
-    public void paintMoves(Graphics2D g, DisplayBoard sizes){
-        for (Move move : selectedPiece.getMoves()){
-            //set color
-            Color color = MOVE_COLOR;
-            if (move.isCaptureMove()){
-                color = CAPTURE_MOVE_COLOR;
-            }
-
-            Point pos = move.postponedPosition;
-            paintField(g, pos.x, pos.y, sizes, color);
-        }
-    }
-
-    public void paintField(Graphics2D g, int x, int y, DisplayBoard sizes, Color primaryColor){
-        Point pos = sizes.getActualPos(x, y, direction);
-        pos = sizes.getIndexPosition(pos.x, pos.y);
-
-        g.setColor(primaryColor);
-        g.fillRect(pos.x, pos.y, sizes.fieldLength, sizes.fieldLength);
-    }
-
-    public Point getPressedFiled(Point pos, DisplayBoard sizes){
-        if (!sizes.isInBoard(pos)){
-            return null;
-        }
-
-        int x = (pos.x - sizes.startX) / sizes.fieldLength;
-        int y = (pos.y - sizes.startY) / sizes.fieldLength;
-        return sizes.getDirectionPos(x, y,direction);
-    }
-
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        DisplayBoard sizes = new DisplayBoard(displaySize, chessBoard);
-        Piece piece = chessBoard.getPiece(getPressedFiled(e.getPoint(), sizes));
-        mousePos = e.getPoint();
-
+        Piece piece = chessBoard.getPiece(fieldPos);
         if (piece != null && piece.team.isInSameTeam(chessBoard.activePlayer)){
             selectedPiece = piece;
             grabbedPiece = piece;
@@ -223,34 +201,42 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        DisplayBoard sizes = new DisplayBoard(displaySize, chessBoard);
-        Point releasePos = getPressedFiled(e.getPoint(), sizes);
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
+        mousePos = e.getPoint();
 
-        if (selectedPiece != null && releasePos != null){
-            if (!selectedPiece.currentPosition.equals(releasePos)){
-                //check if it is a viable move
-                for (Move move : selectedPiece.getMoves()){
-                    if (releasePos.equals(move.postponedPosition)){
-                        chessBoard.executeMove(move);
-                    }
-                }
+        grabbedPiece = null;
+        repaint();
 
-                selectedPiece = null;
+        Point fieldPos = sizes.getDirectionalFieldSquare(mousePos, direction);
+        if (selectedPiece == null || fieldPos == null){
+            return;
+        }
+        if (selectedPiece.currentPosition.equals(fieldPos)){
+            return;
+        }
+
+        for (Move move : client.getPossibleMoves(selectedPiece)){
+            if (fieldPos.equals(move.postponedPosition)){
+                client.executeMove(move);
             }
         }
 
-        grabbedPiece = null;
+        selectedPiece = null;
         repaint();
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        //paint grabbedPiece
         mousePos = e.getPoint();
         repaint();
     }
 
-    /* not needed */
+    /* mouse listener methods - not needed */
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
     @Override
     public void mouseEntered(MouseEvent e) {
 
@@ -258,10 +244,6 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
 
     @Override
     public void mouseExited(MouseEvent e) {
-
-    }
-    @Override
-    public void mouseClicked(MouseEvent e) {
 
     }
 

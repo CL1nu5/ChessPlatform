@@ -155,7 +155,7 @@ public class BoardTest extends TestCase {
     //tests if the position can be read and put into the board
     public void testReadPosition(){
         Board board = new Board();
-        board.readPosition(new File("save/StartPosition/defaultPosition.json"));
+        board.readPosition(new File("save/startPosition/defaultPosition.json"));
 
         //select some random positions to check if they are correct
         //checking for existence (null), type (queen, pawn, ...), position and team
@@ -179,7 +179,7 @@ public class BoardTest extends TestCase {
 
     public void testStartingPositionPossibleMoves(){
         Board board = new Board();
-        board.readPosition(new File("save/StartPosition/defaultPosition.json"));
+        board.readPosition(new File("save/startPosition/defaultPosition.json"));
 
         //there are 20 possible starting positions in chess
         assertEquals(20, board.getMoves().size());

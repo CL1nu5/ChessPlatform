@@ -1,118 +1,252 @@
 package DataObjects;
 
-import ChessObjects.Board;
+import ChessObjects.Chess;
 import ChessObjects.PieceTypes.Team;
 import Support.StringEditor;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class DisplayBoard {
-    public int startX;
-    public int startY;
-    public int fieldLength;
-    public int fieldCount;
+    //values
+    private final int startX;
+    private final int startY;
+    public final int fieldLength;
+    public final int fieldCount;
 
-    public DisplayBoard(Dimension displaySize, Board board){
-        fieldCount = board.pieces.length + 2;
+    //it takes the full length of the smaller side
+    public DisplayBoard(Dimension displaySize, int fieldCount){
+        this.fieldCount = fieldCount;
 
         int min = Math.min(displaySize.width, displaySize.height);
         startX = (displaySize.width - min) / 2;
         startY = (displaySize.height - min) / 2;
-        fieldLength = min / fieldCount;
+
+        fieldLength = min / this.fieldCount;
     }
 
-    /* information getter */
-    public boolean isInRim(Point position){
-        if (!isInDisplay(position)){
+    /* getter - get all positions of a Type */
+    public ArrayList<PointComparator> getSquarePositions(Team direction){
+        ArrayList<PointComparator> positions = new ArrayList<>(getRimPositions());
+        positions.addAll(getFieldPositions(direction));
+
+        return positions;
+    }
+
+    public ArrayList<PointComparator> getRimPositions(){
+        ArrayList<PointComparator> positions = new ArrayList<>();
+
+        //x rims
+        for (int y = 0; y < fieldCount; y++){
+            for (int x = 0; x < fieldCount; x += (fieldCount - 1)){
+                PointComparator compare = new PointComparator(new Point(x, y),
+                        getRealPositionOfSquare(new Point(x, y)));
+                positions.add(compare);
+            }
+        }
+
+        //y rims:  0 and fieldLength - 1 are excluded, because thy are already cover in x rims
+        for (int y = 0; y < fieldCount; y += (fieldCount - 1)){
+            for (int x = 1; x < fieldCount - 1; x ++){
+                PointComparator compare = new PointComparator(new Point(x, y),
+                        getRealPositionOfSquare(new Point(x, y)));
+                positions.add(compare);
+            }
+        }
+
+        return positions;
+    }
+
+    public ArrayList<PointComparator> getFieldPositions(Team direction){
+        ArrayList<PointComparator> positions = new ArrayList<>();
+        int playFieldCount = fieldCount - 2;
+
+        for(int y = 0; y < playFieldCount; y++){
+            for (int x = 0; x < playFieldCount; x++){
+                PointComparator compare = new PointComparator(new Point(x, y),
+                        getRealPositionOfDirectionalFieldSquare(new Point(x, y), direction));
+                positions.add(compare);
+            }
+        }
+
+        return positions;
+    }
+
+    /* conditions - they all take the square position */
+    private boolean isInBoard(Point pos){
+        if (pos.x < 0 || pos.x >= fieldCount){
             return false;
         }
 
-        return (isInXRim(position) || isInYRim(position));
+        return pos.y >= 0 && pos.y < fieldCount;
     }
 
-    public boolean isInXRim(Point position){
-        return position.x < startX + fieldLength || position.x >= getMaxX() - fieldLength;
-    }
-    public boolean isInYRim(Point position){
-        return position.y < startY + fieldLength || position.y >= getMaxY() - fieldLength;
-    }
-
-    public boolean isInBoard(Point position){
-        if (!isInDisplay(position)){
+    private boolean isInRim(Point pos){
+        if (!isInBoard(pos)){
             return false;
         }
 
-        return !isInRim(position);
+        return isInXRim(pos) || isInYRim(pos);
     }
 
-    public boolean isInDisplay(Point position){
-        return position.x >= startX && position.x <= getMaxX() && position.y >= startY && position.y <= getMaxY();
+    public boolean isInXRim(Point pos){
+        return pos.y == 0 || pos.y == fieldCount - 1;
     }
 
-    /* position getter */
-    public Point getIndexPosition(int x, int y){
-        return new Point(startX + fieldLength * x, startY + fieldLength * y);
+    public boolean isInYRim(Point pos){
+        return pos.x == 0 || pos.x == fieldCount - 1;
     }
 
-    public Point getScaledPosition(Point pos, double scale){
-        return new Point(pos.x  + (int) (fieldLength * (1 - scale)) / 2, pos.y  + (int) (fieldLength * (1 - scale)) / 2);
+    private boolean isInField(Point pos){
+        return isInBoard(pos) && !isInRim(pos);
     }
 
-    public Point getStringStartingPos(int indexX, int indexY, String string, Font font){
-        Point filedPos = getIndexPosition(indexX, indexY);
+    /* conversion getter - they convert relative and real */
+    //takes real position
+    private Point getRelativePosition(Point pos){
+        Point startPos = getStartPoint();
+        return new Point(pos.x - startPos.x, pos.y - startPos.y);
+    }
+
+    //takes relative position
+    private Point getRealPosition(Point pos){
+        Point startPos = getStartPoint();
+        return new Point(pos.x + startPos.x, pos.y + startPos.y);
+    }
+
+    /* conversion getter - they all take real positions */
+    //gets square position by real position
+    public Point getSquare(Point pos){
+        Point relativPos = getRelativePosition(pos);
+        return new Point(relativPos.x / fieldLength, relativPos.y / fieldLength);
+    }
+
+    //gets playing field position by real position
+    private Point getFieldSquare(Point pos){
+        Point squarePos = getSquare(pos);
+
+        if (!isInField(squarePos)){
+            return null;
+        }
+
+         return new Point(squarePos.x - 1, squarePos.y - 1);
+    }
+
+    //gets directional playing field by real position
+    public Point getDirectionalFieldSquare(Point pos, Team direction){
+        Point fieldSquarePos = getFieldSquare(pos);
+
+        if (fieldSquarePos == null){
+            return null;
+        }
+
+        if(direction.isInSameTeam(Team.White)){
+            return fieldSquarePos;
+        }
+
+        return getMirroredFieldPosition(fieldSquarePos);
+    }
+
+    /* conversion getter - they all take square / field positions */
+    //takes field position and turn it into real position
+    public Point getRealPositionOfSquare(Point pos){
+        Point squarePos = new Point(pos.x * fieldLength, pos.y * fieldLength);
+        return getRealPosition(squarePos);
+    }
+
+    //takes field position and turn it into real position
+    private Point getRealPositionOfFieldSquare(Point pos){
+        Point squarePos = new Point(pos.x + 1, pos.y + 1);
+
+        if (!isInField(squarePos)){
+            return null;
+        }
+
+        return getRealPositionOfSquare(squarePos);
+    }
+
+    //takes directional field position and turn it into real position
+    public Point getRealPositionOfDirectionalFieldSquare(Point pos, Team direction){
+        if (pos == null){
+            return null;
+        }
+
+        if (direction.isInSameTeam(Team.Black)){
+            pos = getMirroredFieldPosition(pos);
+        }
+
+        return getRealPositionOfFieldSquare(pos);
+    }
+
+    /* mirror getter */
+    public Point getMirroredFieldPosition(Point pos){
+        return new Point(7 - pos.x, 7 - pos.y);
+    }
+
+    /* string getter */
+    public String getRimChar(Point squarePos,Team direction){
+        if (isInXRim(squarePos) && isInYRim(squarePos)){
+            return "";
+        }
+
+        int charPosition = 0;
+        if (isInYRim(squarePos)){
+            charPosition = 1;
+        }
+
+        Point fieldPos = new Point(squarePos.x - 1, squarePos.y - 1);
+
+        if (direction.isInSameTeam(Team.Black)){
+            fieldPos = getMirroredFieldPosition(fieldPos);
+        }
+
+        return String.valueOf(Objects.requireNonNull(Chess.translatePosToCoords(fieldPos)).charAt(charPosition));
+    }
+
+    public Point getStringStartingPosition(Point realPosition, String string, Font font){
         Dimension stringSize = StringEditor.getStringSize(string, font);
 
-        int x = filedPos.x + (fieldLength - stringSize.width) / 2;
-        int y = filedPos.y + fieldLength - (fieldLength - stringSize.height) / 2;
+        int x = realPosition.x + (fieldLength - stringSize.width) / 2;
+        int y = realPosition.y + fieldLength - (fieldLength - stringSize.height) / 2;
 
         return new Point(x, y);
     }
 
-    public Point getMinPoint(){
+    /* scaled getter */
+    public Rectangle getScaledBounds(Point realPosition, double scale){
+        Dimension size = new Dimension((int) (fieldLength * scale), (int) (fieldLength * scale));
+        Point newPos = new Point(realPosition.x  + (int) (fieldLength * (1 - scale)) / 2, realPosition.y  + (int) (fieldLength * (1 - scale)) / 2);
+
+        return new Rectangle(newPos, size);
+    }
+
+    /* playing field basic getter */
+    private Point getFieldStartPoint(){
+        return new Point(startX + fieldLength, startY + fieldLength);
+    }
+
+    private Dimension getFieldSize(){
+        int length = fieldLength * (fieldCount - 2);
+        return new Dimension(length, length);
+    }
+
+    public Rectangle getFieldBounds(){
+        return new Rectangle(getFieldStartPoint(), getFieldSize());
+    }
+
+    /* basic getter */
+
+    private Point getStartPoint(){
         return new Point(startX, startY);
     }
 
-    public Point getMaxPoint(){
-        return new Point(getMaxX(), getMaxY());
+    private Dimension getSize(){
+        int length = fieldLength * fieldCount;
+        return new Dimension(length, length);
     }
 
-    public int getMaxX(){
-        return startX + fieldLength * fieldCount;
-    }
-
-    public int getMaxY(){
-        return startY + fieldLength * fieldCount;
-    }
-
-    public Point getDirectionPos(int x, int y, Team direction){
-        x -= direction.value;
-        y -= direction.value;
-
-        if (direction == Team.White){
-            return new Point(x,y);
-        }
-
-        return new Point(fieldCount - x - 1, fieldCount - y - 1);
-    }
-
-    public Point getActualPos(int x, int y, Team direction){
-        x -= direction.value;
-        y -= direction.value;
-
-        if (direction == Team.White){
-            return new Point(x + 2,y + 2);
-        }
-        System.out.println(x +"," + y);
-        return new Point(fieldCount - x - 1, fieldCount - y - 1);
-    }
-
-    /* size getter */
-    public Dimension getFieldSize(){
-        return new Dimension(fieldLength, fieldLength);
-    }
-
-    public Dimension getScaledFiledSize(double scale){
-        Dimension fieldSize = getFieldSize();
-        return new Dimension((int) (fieldSize.width * scale), (int) (fieldSize.height * scale));
+    public Rectangle getBounds(){
+        return new Rectangle(getStartPoint(), getSize());
     }
 }

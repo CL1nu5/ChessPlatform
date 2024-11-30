@@ -2,20 +2,23 @@ package Main;
 
 import ChessObjects.Board;
 import ChessObjects.PieceTypes.Team;
+import Client.Client;
 import GUI.ChessPanel;
 import GUI.Frame;
 
 import java.awt.*;
 import java.io.File;
 
-public class Main {
+public class MainClient {
     public static void main(String[] args) {
+        Board board = new Board();
+        board.readPosition(new File("save/startPosition/defaultPosition.json"));
+
         Frame frame = new Frame("Chess Game");
         frame.setIcon("res/Icons/frame_icon.png");
 
-        Board board = new Board();
-        board.readPosition(new File("save/StartPosition/defaultPosition.json"));
+        Client client = new Client(board);
 
-        new ChessPanel(frame, board, new Dimension(1000, 800), Team.White);
+        new ChessPanel(frame, client, new Dimension(1000, 800), board, Team.White);
     }
 }

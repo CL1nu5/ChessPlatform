@@ -59,32 +59,4 @@ public class StringEditor {
 
         return new Dimension((int) bounds.getWidth(), (int) bounds.getHeight() / 2);
     }
-
-    //getting the perfect sized via binary search for a given box
-    public static Font getPerfectSizedFont(String style, String string, Dimension box, int minFontSize, int maxFontSize){
-        //to small / to big
-        if (minFontSize >= maxFontSize)
-            return new Font(style, Font.PLAIN, maxFontSize);
-
-        int mid = (minFontSize + maxFontSize) / 2;
-
-        //font size need to be smaller
-        if (!fontFits(style, string, box, mid))
-            return getPerfectSizedFont(style, string, box, minFontSize, mid - 1);
-
-        //font size needs to be bigger
-        if (fontFits(style, string, box, mid + 1))
-            return getPerfectSizedFont(style, string, box, mid + 1, maxFontSize);
-
-        //font size is perfect
-        return new Font(style, Font.PLAIN, mid);
-    }
-
-    //checks if the string with the font size fits in a box
-    public static boolean fontFits(String style, String string, Dimension box, int fontSize){
-        Font font = new Font(style, Font.PLAIN, fontSize);
-        Dimension textSize = getStringSize(string, font);
-
-        return box.width >= textSize.width && box.height >= textSize.height;
-    }
 }

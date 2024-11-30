@@ -47,7 +47,7 @@ public class Move implements Cloneable{
         removeCapturedPiece();
 
         if (!movingPiece.setPosition(postponedPosition)) {
-            logger.warning("move:execute - position update not possible");
+            logger.warning("move:execute - position update not possible: " + this);
         }
 
         if (connectedMove != null) {
@@ -61,7 +61,7 @@ public class Move implements Cloneable{
         }
 
         if (!movingPiece.setPosition(previousPosition)) {
-            logger.warning("move:undo - position update not possible");
+            logger.warning("move:undo - position update not possible: " + this);
         }
 
         addCapturedPiece();
