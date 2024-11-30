@@ -167,7 +167,7 @@ public class DisplayBoard {
     }
 
     //takes directional field position and turn it into real position
-    private Point getRealPositionOfDirectionalFieldSquare(Point pos, Team direction){
+    public Point getRealPositionOfDirectionalFieldSquare(Point pos, Team direction){
         if (pos == null){
             return null;
         }
@@ -211,6 +211,14 @@ public class DisplayBoard {
         int y = realPosition.y + fieldLength - (fieldLength - stringSize.height) / 2;
 
         return new Point(x, y);
+    }
+
+    /* scaled getter */
+    public Rectangle getScaledBounds(Point realPosition, double scale){
+        Dimension size = new Dimension((int) (fieldLength * scale), (int) (fieldLength * scale));
+        Point newPos = new Point(realPosition.x  + (int) (fieldLength * (1 - scale)) / 2, realPosition.y  + (int) (fieldLength * (1 - scale)) / 2);
+
+        return new Rectangle(newPos, size);
     }
 
     /* playing field basic getter */

@@ -1,6 +1,7 @@
 package GUI;
 
 import ChessObjects.Board;
+import ChessObjects.Piece;
 import ChessObjects.PieceTypes.Team;
 import DataObjects.DisplayBoard;
 import DataObjects.PointComparator;
@@ -22,10 +23,12 @@ public class ChessPanel extends JPanel {
     //JObjects
     Frame frame;
     Dimension displaySize;
+    Point mousePos;
 
     //GameObjects
     Board chessBoard;
     Team direction;
+    Piece selectedPiece, grabbedPiece;
 
     public ChessPanel(Frame frame, Dimension displaySize, Board chessBoard, Team direction){
         this.frame = frame;
@@ -82,6 +85,8 @@ public class ChessPanel extends JPanel {
             g.fillRect(pc.to.x, pc.to.y, sizes.fieldLength, sizes.fieldLength);
 
             //paint text
+            Font font = new Font("Serif", Font.PLAIN, 40);
+            g.setFont(font);
 
             String character = sizes.getRimChar(pc.from, direction);
             Point stringPosition = sizes.getStringStartingPosition(pc.to, character, g.getFont());
@@ -96,6 +101,38 @@ public class ChessPanel extends JPanel {
     }
 
     private void paintPieces(Graphics2D g){
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
 
+        for (int y = 0; y < chessBoard.pieces.length; y++){
+            for (int x = 0; x < chessBoard.pieces[y].length; x++){
+                //getting hte piece
+                Piece piece = chessBoard.getPiece(new Point(x, y));
+
+                //checking if piece can be painted
+                if (piece == null){
+                    continue;
+                }
+
+                if (piece == grabbedPiece){
+                    continue;
+                }
+
+                double scale = 0.75; // 75% of grid size
+                paintPiece(g, sizes, piece, scale, true);
+            }
+        }
+    }
+
+    private void paintPiece(Graphics2D g, DisplayBoard sizes, Piece piece, double scale, boolean gridlocked){
+        Point position = sizes.getRealPositionOfDirectionalFieldSquare(piece.currentPosition, direction);
+        Rectangle bounds = sizes.getScaledBounds(position, scale);
+
+        if (!gridlocked){
+            bounds.setLocation(bounds.x - bounds.width / 2, bounds.y - bounds.height / 2);
+        }
+
+        Image pieceImage = new ImageIcon(
+                "res/ChessPieces/" + piece.team + "/" + piece.getClass().getSimpleName() + ".png").getImage();
+        g.drawImage(pieceImage, bounds.x, bounds.y, bounds.width, bounds.height, null);
     }
 }
