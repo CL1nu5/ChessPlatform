@@ -17,7 +17,7 @@ public class MainClient {
         Frame frame = new Frame("Chess Game");
         frame.setIcon("res/Icons/frame_icon.png");
 
-        Client client = new Client(board);
+        Client client = new Client(board, "localhost", 4891);
 
         new ChessPanel(frame, client, new Dimension(1000, 800), board, Team.White);
     }

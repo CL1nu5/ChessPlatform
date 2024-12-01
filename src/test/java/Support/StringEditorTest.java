@@ -44,4 +44,27 @@ public class StringEditorTest extends TestCase {
         assertEquals("Hallo", StringEditor.upperFirst("hallo"));
 
     }
+
+    //testing how many lines are in a string
+    public void testGetLineCounter(){
+        //without line feed
+        String test = "hallo";
+        assertEquals(1, StringEditor.getLineCounter(test));
+
+        //with one line feed
+        test = "hallo \n this";
+        assertEquals(2, StringEditor.getLineCounter(test));
+
+        //with multiple line feeds
+        test = "hallo \n this \n is \n a \n huge \n test";
+        assertEquals(6, StringEditor.getLineCounter(test));
+
+        //line feed at the end of line
+        test = "hallo \n";
+        assertEquals(1, StringEditor.getLineCounter(test));
+
+        //just line feeds
+        test = "\n\n\n";
+        assertEquals(3, StringEditor.getLineCounter(test));
+    }
 }
