@@ -142,12 +142,26 @@ public class Move implements Cloneable{
     public Move clone(Board cloneBoard) {
         try {
             Move clone = (Move) super.clone();
-
+            //pieces
             clone.movingPiece = cloneBoard.getPiece(movingPiece.currentPosition);
-            clone.capturedPiece = cloneBoard.getPiece(capturedPiece.currentPosition);
+            if(capturedPiece != null) {
+                clone.capturedPiece = cloneBoard.getPiece(capturedPiece.currentPosition);
+            }
+            else {
+                clone.capturedPiece = null;
+            }
+
+            //positions
             clone.previousPosition = clone.movingPiece.currentPosition;
             clone.postponedPosition = (Point) postponedPosition.clone();
-            clone.connectedMove = connectedMove.clone(cloneBoard);
+
+            //other
+            if(connectedMove != null) {
+                clone.connectedMove = connectedMove.clone(cloneBoard);
+            }
+            else {
+                clone.connectedMove = null;
+            }
             clone.board = cloneBoard;
 
             return clone;

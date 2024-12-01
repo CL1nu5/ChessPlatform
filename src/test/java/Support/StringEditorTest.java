@@ -4,6 +4,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -43,6 +44,25 @@ public class StringEditorTest extends TestCase {
         //test normal functionality
         assertEquals("Hallo", StringEditor.upperFirst("hallo"));
 
+    }
+
+    //compares the different string sizes
+    public void testGetStringSize(){
+        //setup
+        String test = "Test";
+        Font smallFont = new Font("Serif", Font.PLAIN, 10);
+        Font mediumFont = new Font("Serif", Font.PLAIN, 15);
+        Font bigFont = new Font("Serif", Font.PLAIN, 16);
+
+        Dimension small = StringEditor.getStringSize(test, smallFont);
+        Dimension medium = StringEditor.getStringSize(test, mediumFont);
+        Dimension big = StringEditor.getStringSize(test, bigFont);
+
+        //tests, that it recognizes the bigger one as bigger
+        assertTrue(small.width < medium.width && small.height < medium.height);
+
+        //tests, if it recognizes small changes
+        assertTrue(medium.width < big.width && medium.height < big.height);
     }
 
     //testing how many lines are in a string

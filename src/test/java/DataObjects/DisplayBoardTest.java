@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class DisplayBoardTest extends TestCase {
     public DisplayBoardTest(String testName){
@@ -92,5 +93,114 @@ public class DisplayBoardTest extends TestCase {
 
         pos = sizes.getDirectionalFieldSquare(new Point(420, 560), Team.Black);
         assertEquals(new Point(4, 1), pos);
+    }
+
+    //checks the rim char of different positions
+    public void testGetRimChar(){
+        DisplayBoard sizes = new DisplayBoard(new Dimension(1000, 800), 10);
+
+        // has no rim char, because it is a corner - team white and black
+        Point corner = new Point(0, 0);
+        assertEquals("", sizes.getRimChar(corner, Team.White));
+        assertEquals("", sizes.getRimChar(corner, Team.Black));
+
+        //has no rim char, because it isn't on the rim - team white and black
+        Point noRim = new Point(1, 1);
+        assertEquals("", sizes.getRimChar(noRim, Team.White));
+        assertEquals("", sizes.getRimChar(noRim, Team.Black));
+
+        //y rim - team white and black
+        Point yRim = new Point(1, 0);
+        assertEquals("a", sizes.getRimChar(yRim, Team.White));
+        assertEquals("h", sizes.getRimChar(yRim, Team.Black));
+
+        //x rim - team white and black
+        Point xRim = new Point(0, 3);
+        assertEquals("6", sizes.getRimChar(xRim, Team.White));
+        assertEquals("3", sizes.getRimChar(xRim, Team.Black));
+    }
+
+    //compares the scaled bounds with the previous bounds
+    public void testGetScaledBounds(){
+        //setup
+        DisplayBoard sizes = new DisplayBoard(new Dimension(1000, 800), 10);
+        Point position = new Point(500, 600);
+
+        //same size
+        Rectangle sameBounds = sizes.getScaledBounds(position, 1);
+        assertEquals(position.x, sameBounds.x);
+        assertEquals(position.y, sameBounds.y);
+        assertEquals(sizes.fieldLength, sameBounds.width);
+        assertEquals(sizes.fieldLength, sameBounds.height);
+
+        //smaller
+        Rectangle smallerBounds = sizes.getScaledBounds(position, 0.5);
+        assertEquals(position.x + sizes.fieldLength / 4, smallerBounds.x);
+        assertEquals(position.y + sizes.fieldLength / 4, smallerBounds.y);
+        assertEquals(sizes.fieldLength / 2, smallerBounds.width);
+        assertEquals(sizes.fieldLength / 2, smallerBounds.height);
+
+        //bigger
+        Rectangle biggerBounds = sizes.getScaledBounds(position, 2);
+        assertEquals(position.x - sizes.fieldLength / 2, biggerBounds.x);
+        assertEquals(position.y - sizes.fieldLength / 2, biggerBounds.y);
+        assertEquals(sizes.fieldLength * 2, biggerBounds.width);
+        assertEquals(sizes.fieldLength * 2, biggerBounds.height);
+    }
+
+    public void testGetRealPositionOfDirectionalFieldSquare(){
+        DisplayBoard sizes = new DisplayBoard(new Dimension(1000, 800), 10);
+
+        //not in display board
+        assertNull(sizes.getRealPositionOfDirectionalFieldSquare(new Point(-1,0), Team.White));
+        assertNull(sizes.getRealPositionOfDirectionalFieldSquare(new Point(-1,0), Team.Black));
+        assertNull(sizes.getRealPositionOfDirectionalFieldSquare(new Point(-1,7), Team.Black));
+        assertNull(sizes.getRealPositionOfDirectionalFieldSquare(new Point(0,8), Team.Black));
+
+
+        //field [0,0] - team black and white
+        Point realPosition = sizes.getRealPositionOfDirectionalFieldSquare(new Point(0,0), Team.White);
+        assertEquals(new Point(180, 80), realPosition);
+        realPosition = sizes.getRealPositionOfDirectionalFieldSquare(new Point(0,0), Team.Black);
+        assertEquals(new Point(740, 640), realPosition);
+
+        //field [7,7] - team black and white
+        realPosition = sizes.getRealPositionOfDirectionalFieldSquare(new Point(7,7), Team.White);
+        assertEquals(new Point(740, 640), realPosition);
+        realPosition = sizes.getRealPositionOfDirectionalFieldSquare(new Point(7,7), Team.Black);
+        assertEquals(new Point(180, 80), realPosition);
+    }
+
+    public void testGetSquarePositions(){
+        DisplayBoard sizes = new DisplayBoard(new Dimension(1000, 800), 10);
+        ArrayList<PointComparator> squares = sizes.getSquarePositions(Team.White);
+
+        //size must equal right amount
+        assertEquals(100, squares.size());
+
+        //sample
+        assertEquals(new PointComparator(new Point(0, 0), new Point(100, 0)), squares.get(0));
+    }
+
+    public void testGetRimPositions(){
+        DisplayBoard sizes = new DisplayBoard(new Dimension(1000, 800), 10);
+        ArrayList<PointComparator> rimSquares = sizes.getRimPositions();
+
+        //size must equal right amount
+        assertEquals(36, rimSquares.size());
+
+        //sample
+        assertEquals(new PointComparator(new Point(0, 0), new Point(100, 0)), rimSquares.get(0));
+    }
+
+    public void testGetFieldPositions(){
+        DisplayBoard sizes = new DisplayBoard(new Dimension(1000, 800), 10);
+        ArrayList<PointComparator> fieldSquares = sizes.getFieldPositions(Team.White);
+
+        //size must equal right amount
+        assertEquals(64, fieldSquares.size());
+
+        //sample
+        assertEquals(new PointComparator(new Point(0, 0), new Point(180, 80)), fieldSquares.get(0));
     }
 }

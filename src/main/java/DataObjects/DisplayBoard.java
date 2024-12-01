@@ -186,6 +186,10 @@ public class DisplayBoard {
 
     /* string getter */
     public String getRimChar(Point squarePos,Team direction){
+        if (!isInRim(squarePos)){
+            return "";
+        }
+
         if (isInXRim(squarePos) && isInYRim(squarePos)){
             return "";
         }
@@ -204,9 +208,7 @@ public class DisplayBoard {
         return String.valueOf(Objects.requireNonNull(Chess.translatePosToCoords(fieldPos)).charAt(charPosition));
     }
 
-    public Point getStringStartingPosition(Point realPosition, String string, Font font){
-        Dimension stringSize = StringEditor.getStringSize(string, font);
-
+    public Point getStringStartingPosition(Point realPosition,Dimension stringSize){
         int x = realPosition.x + (fieldLength - stringSize.width) / 2;
         int y = realPosition.y + fieldLength - (fieldLength - stringSize.height) / 2;
 

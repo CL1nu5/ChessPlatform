@@ -7,11 +7,14 @@ import ChessObjects.Piece;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class Client{
 
     private Board board;
     private Transmitter transmitter;
+
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     //constructor stating connection
     public Client(Board board, String ip, int port){
@@ -37,7 +40,8 @@ public class Client{
             Socket clientSocket = new Socket(ip, port);
             return new Transmitter(clientSocket);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.warning("Connection not possible");
         }
+        return null;
     }
 }
