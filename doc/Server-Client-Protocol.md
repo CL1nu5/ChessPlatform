@@ -14,10 +14,11 @@
   - Number of lines
   - ("STX", 0x02)
   - content (every line ends wit a line feed (LF, 0xA, '\n'))
+  - ("ETX", 0x03)
 
 - After receiving all the Data, the receiver has two options:
   - If everything was transmitted correctly it sends back ("ACK", 0x06)
   - If there were errors transmitting, sends ("NAK", 0x15) and repeats the process
 
-- If the transfer is carried out incorrectly 3 times, the transfer is aborted and the client throws an error
+- If the transfer is carried out incorrectly 3 times, the transfer is aborted and the sender throws an error
 
