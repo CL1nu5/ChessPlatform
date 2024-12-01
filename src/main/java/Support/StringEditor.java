@@ -59,4 +59,9 @@ public class StringEditor {
 
         return new Dimension((int) bounds.getWidth(), (int) bounds.getHeight() / 2);
     }
+
+    //gets the number of lines in a String if the '\n' is at the end of the string it doesn't count as a new line
+    public static int getLineCounter(String string){
+        return (int) string.lines().count();
+    }
 }

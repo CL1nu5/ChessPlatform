@@ -4,22 +4,40 @@ import ChessObjects.Board;
 import ChessObjects.Move;
 import ChessObjects.Piece;
 
+import java.io.*;
+import java.net.Socket;
 import java.util.ArrayList;
 
-public class Client {
+public class Client{
 
     private Board board;
+    private Transmitter transmitter;
 
-    public Client(Board board){
+    //constructor stating connection
+    public Client(Board board, String ip, int port){
         this.board = board;
+
+        //connection
+        transmitter = connect(ip, port);
     }
 
+    /* interaction Methods */
     public ArrayList<Move> getPossibleMoves(Piece piece){
-        return piece.getMoves();
+        return piece.getMoves(); // todo
     }
 
     public boolean executeMove(Move move){
         board.executeMove(move);
-        return true;
+        return true; // todo
+    }
+
+    /* socket methods */
+    public Transmitter connect(String ip, int port){
+        try {
+            Socket clientSocket = new Socket(ip, port);
+            return new Transmitter(clientSocket);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
