@@ -7,6 +7,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 public class StringEditor {
+
     //turns an arraylist containing a .json into a single line string without spaces, quotes
     public static String turnJsonListIntoString(ArrayList<String> json) {
         StringBuilder returnValue = new StringBuilder();

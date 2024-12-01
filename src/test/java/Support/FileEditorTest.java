@@ -8,6 +8,7 @@ import junit.framework.TestSuite;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class FileEditorTest extends TestCase {
 
@@ -55,5 +56,14 @@ public class FileEditorTest extends TestCase {
 
         //remove file
         assertTrue(file.delete());
+    }
+
+    public void testReaderFileDoesNotExist(){
+        //setup
+        FileEditor editor = new FileEditor();
+
+        //check content
+        ArrayList<String> content = editor.read(new File("fileThatDoesNotExist.txt"));
+        assertTrue(content.isEmpty());
     }
 }

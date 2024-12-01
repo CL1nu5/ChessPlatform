@@ -7,6 +7,7 @@ import ChessObjects.PieceTypes.Team;
 import Client.Client;
 import DataObjects.DisplayBoard;
 import DataObjects.PointComparator;
+import Support.StringEditor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -90,17 +91,19 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
     private void paintRim(Graphics2D g) {
         DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
 
+        //character setup
+        Font font = new Font("Serif", Font.PLAIN, 40);
+        g.setFont(font);
+        Dimension stringSize = StringEditor.getStringSize(" ", font);
+
         for (PointComparator pc : sizes.getRimPositions()) {
             //paint rim square
             g.setColor(RIM_COLOR);
             g.fillRect(pc.to.x, pc.to.y, sizes.fieldLength, sizes.fieldLength);
 
             //paint text
-            Font font = new Font("Serif", Font.PLAIN, 40);
-            g.setFont(font);
-
             String character = sizes.getRimChar(pc.from, direction);
-            Point stringPosition = sizes.getStringStartingPosition(pc.to, character, g.getFont());
+            Point stringPosition = sizes.getStringStartingPosition(pc.to, stringSize);
 
             g.setColor(TEXT_COLOR);
             g.drawString(character, stringPosition.x, stringPosition.y);
