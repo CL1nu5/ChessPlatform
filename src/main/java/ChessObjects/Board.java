@@ -156,7 +156,13 @@ public class Board implements Cloneable{
 
         //read file content
         FileEditor fileEditor = new FileEditor();
-        String content = StringEditor.turnJsonListIntoString(fileEditor.read(saveFile));
+        setPositionByString(fileEditor.read(saveFile));
+    }
+
+    //setting the position via json String
+    public void setPositionByString(ArrayList<String> json){
+        //turning json List into single string without line feed and whitespaces
+        String content = StringEditor.turnJsonListIntoString(json);
 
         //getting pieces and adding them to the board
         for (Piece piece : getPiecesFromJson(content)){
@@ -165,7 +171,7 @@ public class Board implements Cloneable{
     }
 
     //gets piece information from a json file
-    public ArrayList<Piece> getPiecesFromJson(String json){
+    private ArrayList<Piece> getPiecesFromJson(String json){
         ArrayList<Piece> readPieces = new ArrayList<>();
 
         int index = 0;
@@ -174,7 +180,7 @@ public class Board implements Cloneable{
         while (index < json.length() && (current = json.charAt(index)) != ']'){
             if (current == '{'){
                 String pieceJson = StringEditor.collectFromTill(++index,'}', json);
-                readPieces.add(getPieceFromHash(getPieceValuesFromJson(pieceJson)));
+                readPieces.add(getPieceFromHash(StringEditor.getValuesFromJson(pieceJson)));
 
                 index += pieceJson.length() - 1;
             }
@@ -184,21 +190,8 @@ public class Board implements Cloneable{
         return readPieces;
     }
 
-    //gets all infos of a single piece from a json -> hashmap: type - value
-    public HashMap<String, String> getPieceValuesFromJson(String json){
-        HashMap<String,String> pieceValues = new HashMap<>();
-        String[] components  = json.split(",");
-
-        for (String component : components){
-            String[] parts = component.split(":");
-            pieceValues.put(parts[0], parts[1]);
-        }
-
-        return pieceValues;
-    }
-
     //gets a piece based of the hash values previous red from the json
-    public Piece getPieceFromHash(HashMap<String, String> pieceHash){
+    private Piece getPieceFromHash(HashMap<String, String> pieceHash){
         try {
 
             Class<?>[] constructorClasses = new Class[]{Point.class, Team.class, Board.class};
