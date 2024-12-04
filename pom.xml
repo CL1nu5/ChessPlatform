@@ -17,6 +17,7 @@
     </properties>
 
     <dependencies>
+        <!-- unit tests -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -41,6 +42,7 @@
                 </configuration>
             </plugin>
 
+            <!-- code coverage tool -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -53,10 +55,16 @@
                     </execution>
                     <execution>
                         <id>report</id>
-                        <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <!-- excluded files -->
+                                <exclude>Main/*.class</exclude>
+                                <exclude>GUI/*.class</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

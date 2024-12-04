@@ -14,4 +14,3 @@ In the future I may add a chess-bot to play against, or even an online mode.
 ## Overview
 This is how the game looks like:
 ![chess-board](res/ReadMe/chess-board.png)
-
