@@ -5,6 +5,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class StringEditor {
 
@@ -64,5 +65,18 @@ public class StringEditor {
     //gets the number of lines in a String if the '\n' is at the end of the string it doesn't count as a new line
     public static int getLineCounter(String string){
         return (int) string.lines().count();
+    }
+
+    //gets all infos from a json -> hashmap: type - value
+    public static HashMap<String, String> getValuesFromJson(String json){
+        HashMap<String,String> values = new HashMap<>();
+        String[] components  = json.split(",");
+
+        for (String component : components){
+            String[] parts = component.split(":");
+            values.put(parts[0], parts[1]);
+        }
+
+        return values;
     }
 }

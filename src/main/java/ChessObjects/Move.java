@@ -1,9 +1,11 @@
 package ChessObjects;
 
 import ChessObjects.Pieces.King;
+import Support.StringEditor;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 public class Move implements Cloneable{
@@ -27,6 +29,12 @@ public class Move implements Cloneable{
     //constructor for basic moves (non capture)
     public Move(Piece movingPiece, Point postponedPosition) {
         this(movingPiece, null, postponedPosition, null);
+    }
+
+    //constructor, for getting a move via json
+    public Move(String json, Board board){
+        this.board = board;
+        setMoveViaJson(json);
     }
 
     /* capture methods */
@@ -102,6 +110,45 @@ public class Move implements Cloneable{
     /* position methods */
     public Point getDistance() {
         return new Point(postponedPosition.x - previousPosition.x, postponedPosition.y - previousPosition.y);
+    }
+
+    /* methods getting move via json */
+    //sets values got from json protocol is documented: doc/JSON-formats.md
+    public void setMoveViaJson(String json) {
+        int index = 0;
+        char current;
+
+        while (index < json.length() && (current = json.charAt(index)) != ']') {
+            if (current == '{') {
+                String moveJson = StringEditor.collectFromTill(++index, '}', json);
+                HashMap<String, String> moveValues = StringEditor.getValuesFromJson(moveJson);
+
+                this.movingPiece = getPieceFromHash(moveValues.get("moving-piece"));
+                this.capturedPiece = getPieceFromHash(moveValues.get("captured-piece"));
+
+                this.previousPosition = this.movingPiece.currentPosition;
+                this.postponedPosition = getPositionFromHash(moveValues.get("postponed-position"));
+
+                this.connectedMove = null;
+                if (!moveValues.get("connected-move").isEmpty()){
+                    this.connectedMove = new Move(moveJson.substring(1), board);
+                }
+                return;
+            }
+
+            index++;
+        }
+    }
+
+    private Piece getPieceFromHash(String position){
+        return board.getPiece(getPositionFromHash(position));
+    }
+
+    private Point getPositionFromHash(String position){
+        String [] vals = position.split(",");
+        int x = Integer.parseInt(vals[0]), y = Integer.parseInt(vals[1]);
+
+        return new Point(x, y);
     }
 
     /* fundamental objekt methods */
