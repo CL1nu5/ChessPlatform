@@ -1,6 +1,7 @@
 package GUI;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 
 public class Frame extends JFrame {
@@ -9,6 +10,7 @@ public class Frame extends JFrame {
 
     public Frame(String title) {
         super(title);
+        this.setLayout(new BorderLayout());
         currentPanel = null;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -16,10 +18,10 @@ public class Frame extends JFrame {
     //switching the displayed panel
     public void switchPanel(JPanel newPanel) {
         if (currentPanel != null) {
-            getContentPane().remove(currentPanel);
+            remove(currentPanel);
         }
         currentPanel = newPanel;
-        getContentPane().add(currentPanel);
+        add(currentPanel, BorderLayout.CENTER);
         revalidate();
         repaint();
         pack();
