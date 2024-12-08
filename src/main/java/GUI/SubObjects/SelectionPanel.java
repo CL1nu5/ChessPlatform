@@ -1,5 +1,6 @@
-package GUI;
+package GUI.SubObjects;
 
+import GUI.ChessPanel;
 import Support.StringEditor;
 
 import javax.swing.*;
@@ -9,16 +10,20 @@ public class SelectionPanel extends JPanel {
 
     //JObjects
     JLabel headLabel, bottomLabel;
+    OptionPanel optionPanel;
 
     public SelectionPanel(Dimension displaySize, Point position){
         this.setSize(displaySize);
         this.setLocation(position);
 
-        this.setLayout(new BorderLayout());
+        this.setLayout(new BorderLayout(0, 10));
 
         //add components
         addHeadLabel();
         addBottomLabel();
+
+        optionPanel = new OptionPanel();
+        this.add(optionPanel, BorderLayout.CENTER);
 
         //style settings
         this.setBackground(ChessPanel.LIGHT_COLOR);

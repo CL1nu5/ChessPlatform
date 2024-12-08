@@ -18,10 +18,10 @@ public class Frame extends JFrame {
     //switching the displayed panel
     public void switchPanel(JPanel newPanel) {
         if (currentPanel != null) {
-            remove(currentPanel);
+            getContentPane().remove(currentPanel);
         }
         currentPanel = newPanel;
-        add(currentPanel, BorderLayout.CENTER);
+        getContentPane().add(currentPanel, BorderLayout.CENTER);
         revalidate();
         repaint();
         pack();

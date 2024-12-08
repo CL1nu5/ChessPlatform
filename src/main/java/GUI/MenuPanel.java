@@ -1,7 +1,8 @@
 package GUI;
 
+import GUI.SubObjects.SelectionPanel;
+
 import javax.swing.*;
-import javax.swing.plaf.basic.DefaultMenuLayout;
 import java.awt.*;
 
 public class MenuPanel extends JPanel {
