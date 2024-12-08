@@ -9,11 +9,14 @@ import java.awt.*;
 
 public class SwitchButton extends JButton {
 
+    OptionPanel panel;
+
     private static final int arc = 25;
     public int selection;
     private final double scale;
 
-    public SwitchButton(int selection, double scale){
+    public SwitchButton(OptionPanel panel, int selection, double scale){
+        this.panel = panel;
         this.selection = selection;
         this.scale = scale;
 
@@ -32,6 +35,8 @@ public class SwitchButton extends JButton {
 
         AudioPlayer.playSound("res/sounds/click1.wav");
         selection = newSection;
+        panel.setSelectedPanel();
+
         repaint();
     }
 
