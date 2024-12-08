@@ -1,6 +1,7 @@
 package GUI.SubObjects;
 
 import GUI.ChessPanel;
+import Support.AudioPlayer;
 import Support.StringEditor;
 
 import javax.swing.*;
@@ -25,9 +26,11 @@ public class SwitchButton extends JButton {
         }
 
         if (selection == newSection){
+            AudioPlayer.playSound("res/sounds/click2.wav");
             return;
         }
 
+        AudioPlayer.playSound("res/sounds/click1.wav");
         selection = newSection;
         repaint();
     }
