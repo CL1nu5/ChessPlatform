@@ -26,6 +26,7 @@ public class LocalPanel extends JPanel {
         //add separation
         addLabel("");
 
+        //adding components
         addLabel("Bot:");
         addLabel("playing a game of chess against a self programed chess bot");
         botButton = new RoundButton(0.4, "play against bot");
