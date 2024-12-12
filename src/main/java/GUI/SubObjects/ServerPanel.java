@@ -19,7 +19,7 @@ public class ServerPanel extends JPanel {
 
         //adding components
         addLabel("Start Server:");
-        addLabel("start a server, your friend can coin on");
+        addLabel("start a server, your friend can join on");
         serverButton = new RoundButton(0.4, "start");
         this.add(serverButton);
 
@@ -28,7 +28,7 @@ public class ServerPanel extends JPanel {
 
         //adding components
         addLabel("Join Server:");
-        addLabel("join the server of your friend (enter his ip)");
+        addLabel("join the server of your friend (enter his ip below)");
 
         ipSelection = new JTextField("Enter ip");
         ipSelection.setHorizontalAlignment(SwingConstants.CENTER);
