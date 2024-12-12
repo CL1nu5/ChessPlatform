@@ -13,5 +13,5 @@ In the future I may add a chess-bot to play against, or even an online mode.
    - To connect, both pc's you have to be in the same network
 
 ## Overview
-This is how the game looks like:
+This is how the game looks like: \
 ![chess-board](res/ReadMe/chess-board.png)

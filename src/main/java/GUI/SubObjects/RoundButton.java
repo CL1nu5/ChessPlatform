@@ -5,8 +5,10 @@ import Support.StringEditor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class RoundButton extends JPanel {
+public class RoundButton extends JPanel implements MouseListener {
 
     protected double scale;
     protected static final int arc = 25;
@@ -16,6 +18,7 @@ public class RoundButton extends JPanel {
         this.setOpaque(false);
         this.scale = scale;
         this.buttonText = buttonText;
+        this.addMouseListener(this);
     }
 
     public Rectangle getRealBounds(){
@@ -51,5 +54,38 @@ public class RoundButton extends JPanel {
         int y = bounds.y + bounds.height - (bounds.height - textSize.height) / 2;
 
         g.drawString(text, x, y);
+    }
+
+    public void clickAction(){
+
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        //check if real location was clicked
+        if (getRealBounds().contains(e.getPoint())){
+            clickAction();
+        }
+    }
+
+    /* not needed */
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }
