@@ -5,14 +5,17 @@ import Support.StringEditor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class RoundButton extends JPanel implements MouseListener {
 
     protected double scale;
-    protected static final int arc = 25;
     protected String buttonText;
+
+    protected static final int arc = 25;
+    protected static final Font font = new Font("Serif", Font.PLAIN, 18);
 
     public RoundButton(double scale, String buttonText){
         this.setOpaque(false);
@@ -40,7 +43,6 @@ public class RoundButton extends JPanel implements MouseListener {
         g2d.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, arc, arc);
 
         //paint text
-        Font font = new Font("Serif", Font.PLAIN, 20);
         paintText(g2d, bounds, buttonText, font, ChessPanel.LIGHT_COLOR);
     }
 
@@ -56,36 +58,25 @@ public class RoundButton extends JPanel implements MouseListener {
         g.drawString(text, x, y);
     }
 
-    public void clickAction(){
+    public void clickAction(MouseEvent e){
 
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mousePressed(MouseEvent e) {
         //check if real location was clicked
         if (getRealBounds().contains(e.getPoint())){
-            clickAction();
+            clickAction(e);
         }
     }
 
     /* not needed */
     @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
+    public void mouseClicked(MouseEvent e) {}
     @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
+    public void mouseReleased(MouseEvent e) {}
     @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
+    public void mouseEntered(MouseEvent e) {}
     @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
+    public void mouseExited(MouseEvent e) {}
 }
