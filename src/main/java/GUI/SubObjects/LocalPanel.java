@@ -11,16 +11,23 @@ public class LocalPanel extends JPanel {
     JPanel botButton;
 
     public LocalPanel(){
-        this.setBackground(ChessPanel.DARK_COLOR);
-        this.setLayout(new GridLayout(9, 1));
+        this.setBackground(ChessPanel.LIGHT_COLOR);
+        this.setLayout(new GridLayout(10, 1));
+
+        //add separation
+        addLabel("");
 
         //adding components
-
         addLabel("Local:");
+        addLabel("playing a game of chess against your friends or by yourself on one device");
         localButton = new RoundButton(0.4, "play local");
         this.add(localButton);
 
+        //add separation
+        addLabel("");
+
         addLabel("Bot:");
+        addLabel("playing a game of chess against a self programed chess bot");
         botButton = new RoundButton(0.4, "play against bot");
         this.add(botButton);
     }
