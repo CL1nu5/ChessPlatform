@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class MenuPanel extends JPanel {
 
-    Frame frame;
+    public Frame frame;
     private final Dimension displaySize = new Dimension(1000, 800);
     private final Dimension selectionSize = new Dimension(600, 400);
 
@@ -24,7 +24,7 @@ public class MenuPanel extends JPanel {
 
         Point selectionPos = new Point(
                 (displaySize.width - selectionSize.width) / 2, (displaySize.height - selectionSize.height) / 2);
-        selectionPanel = new SelectionPanel(selectionSize, selectionPos);
+        selectionPanel = new SelectionPanel(selectionSize, selectionPos, this);
         this.add(selectionPanel);
 
         frame.switchPanel(this);

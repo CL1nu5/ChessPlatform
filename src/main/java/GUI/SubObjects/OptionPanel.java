@@ -1,6 +1,7 @@
 package GUI.SubObjects;
 
 import GUI.ChessPanel;
+import GUI.MenuPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,12 +9,14 @@ import java.awt.*;
 public class OptionPanel extends JPanel {
 
     JPanel currentPanel;
+    MenuPanel menuPanel;
 
     SwitchButton button;
     LocalPanel localPanel;
     ServerPanel serverPanel;
 
-    public OptionPanel(){
+    public OptionPanel(MenuPanel menuPanel){
+        this.menuPanel = menuPanel;
         this.setLayout(new BorderLayout(0, 5));
         this.setBackground(ChessPanel.LIGHT_COLOR);
 
@@ -22,7 +25,7 @@ public class OptionPanel extends JPanel {
 
         //crate panels
         localPanel = new LocalPanel();
-        serverPanel = new ServerPanel();
+        serverPanel = new ServerPanel(menuPanel);
 
         //set selection
         setSelectedPanel();

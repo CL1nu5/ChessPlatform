@@ -1,18 +1,27 @@
 package GUI.SubObjects;
 
+import ChessObjects.Board;
+import ChessObjects.PieceTypes.Team;
+import Client.Client;
 import GUI.ChessPanel;
+import GUI.MenuPanel;
 import Support.AudioPlayer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 public class ServerPanel extends JPanel {
+
+    MenuPanel menuPanel;
 
     private RoundButton serverButton, joinButton;
     JTextField ipSelection;
 
-    public ServerPanel(){
+    public ServerPanel(MenuPanel menuPanel){
+        this.menuPanel = menuPanel;
+
         this.setBackground(ChessPanel.LIGHT_COLOR);
         this.setLayout(new GridLayout(10, 1));
 
@@ -72,7 +81,14 @@ public class ServerPanel extends JPanel {
             @Override
             public void clickAction(MouseEvent e){
                 AudioPlayer.playSound("res/sounds/click1.wav");
-                System.out.println("join clicked");
+
+                //setting up game
+                Board board = new Board();
+                board.readPosition(new File("save/startPosition/defaultPosition.json"));
+
+                Client client = new Client(board, "localhost", 4891); //Todo ip selection
+
+                new ChessPanel(menuPanel.frame, client, new Dimension(1000, 800), board, Team.White);
             }
         };
         this.add(serverButton);
