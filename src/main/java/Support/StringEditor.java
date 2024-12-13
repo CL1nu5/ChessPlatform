@@ -68,13 +68,20 @@ public class StringEditor {
     }
 
     //gets all infos from a json -> hashmap: type - value
-    public static HashMap<String, String> getValuesFromJson(String json){
+    public static HashMap<String, String> getValuesFromJson(String json, int linit1, int limit2){
         HashMap<String,String> values = new HashMap<>();
-        String[] components  = json.split(",");
+        String[] components  = json.split(",", linit1);
 
         for (String component : components){
-            String[] parts = component.split(":");
+            String[] parts = component.split(":" , limit2);
+
+            if (parts.length == 1){
+                values.put(parts[0], "");
+                continue;
+            }
+
             values.put(parts[0], parts[1]);
+
         }
 
         return values;

@@ -145,7 +145,7 @@ public abstract class Piece implements Cloneable {
 
     /* fundamental objekt methods */
     public String toString() {
-        return "{" + displayCharacter + ";" + team + ";[y=" + currentPosition.y + ",x=" + currentPosition.x + "]}";
+        return "{" + displayCharacter + ";" + team + ";[x=" + currentPosition.x + ",y=" + currentPosition.y + "]}";
     }
 
     public boolean isSimular(Piece that) {

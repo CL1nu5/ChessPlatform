@@ -180,7 +180,8 @@ public class Board implements Cloneable{
         while (index < json.length() && (current = json.charAt(index)) != ']'){
             if (current == '{'){
                 String pieceJson = StringEditor.collectFromTill(++index,'}', json);
-                readPieces.add(getPieceFromHash(StringEditor.getValuesFromJson(pieceJson)));
+                readPieces.add(getPieceFromHash(StringEditor.getValuesFromJson(
+                        pieceJson, Integer.MAX_VALUE, Integer.MAX_VALUE))); //no limit
 
                 index += pieceJson.length() - 1;
             }

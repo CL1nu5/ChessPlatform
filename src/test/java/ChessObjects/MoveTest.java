@@ -2,11 +2,16 @@ package ChessObjects;
 
 import ChessObjects.PieceTypes.Team;
 import ChessObjects.Pieces.Pawn;
+import ChessObjects.Pieces.Rook;
+import Support.FileEditor;
+import Support.StringEditor;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
 
 public class MoveTest extends TestCase {
     public MoveTest(String testName) {
@@ -69,5 +74,27 @@ public class MoveTest extends TestCase {
 
         //but move is still similar
         assertTrue(moveOriginal.isSimular(newMove));
+    }
+
+    public void testGetMoveFromJson(){
+        //setup
+        Board board = new Board();
+        FileEditor fileEditor = new FileEditor();
+        ArrayList<String> content = fileEditor.read(new File("save/test/testMove.json"));
+
+        String json = StringEditor.turnJsonListIntoString(content);
+
+        Piece pawn = new Pawn(new Point(0,0), Team.White, board);
+        pawn.placeOnBoard();
+
+        Piece enemy = new Pawn(new Point(2,2), Team.Black, board);
+        enemy.placeOnBoard();
+
+        Piece rook = new Rook(new Point(1,4), Team.White, board);
+        rook.placeOnBoard();
+
+        //getting move
+        Move move = new Move(json, board);
+        System.out.println(move);
     }
 }

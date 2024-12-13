@@ -1,9 +1,11 @@
 package ChessObjects;
 
 import ChessObjects.Pieces.King;
+import Support.FileEditor;
 import Support.StringEditor;
 
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -34,6 +36,7 @@ public class Move implements Cloneable{
     //constructor, for getting a move via json
     public Move(String json, Board board){
         this.board = board;
+
         setMoveViaJson(json);
     }
 
@@ -121,7 +124,7 @@ public class Move implements Cloneable{
         while (index < json.length() && (current = json.charAt(index)) != ']') {
             if (current == '{') {
                 String moveJson = StringEditor.collectFromTill(++index, '}', json);
-                HashMap<String, String> moveValues = StringEditor.getValuesFromJson(moveJson);
+                HashMap<String, String> moveValues = StringEditor.getValuesFromJson(moveJson, 4, 2);
 
                 this.movingPiece = getPieceFromHash(moveValues.get("moving-piece"));
                 this.capturedPiece = getPieceFromHash(moveValues.get("captured-piece"));
@@ -141,11 +144,22 @@ public class Move implements Cloneable{
     }
 
     private Piece getPieceFromHash(String position){
-        return board.getPiece(getPositionFromHash(position));
+        Point pos = getPositionFromHash(position);
+
+        if (pos == null){
+            return null;
+        }
+
+        return board.getPiece(pos);
     }
 
     private Point getPositionFromHash(String position){
-        String [] vals = position.split(",");
+        String [] vals = position.split(";");
+
+        if (vals.length != 2){
+            return null;
+        }
+
         int x = Integer.parseInt(vals[0]), y = Integer.parseInt(vals[1]);
 
         return new Point(x, y);

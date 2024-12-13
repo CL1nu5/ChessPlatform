@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import java.awt.*;
+import java.util.Objects;
 
 
 public class ChessTest extends TestCase {
@@ -46,13 +47,66 @@ public class ChessTest extends TestCase {
     public void testBothTranslations(){
         //setup
         Point position = new Point(1,2);
-        String coordinate = "a2";
+        String coordinate = "h8";
 
         //test translating twice, to turn it back into original
         String resultCoordinate = Chess.translatePosToCoords(Chess.translateCoordsToPos(coordinate));
         assertEquals(coordinate, resultCoordinate);
 
-        Point resultPosition = Chess.translateCoordsToPos(Chess.translatePosToCoords(position));
+        Point resultPosition = Chess.translateCoordsToPos(Objects.requireNonNull(Chess.translatePosToCoords(position)));
         assertEquals(position, resultPosition);
+    }
+
+    /* edge cases */
+    //tests the method translateCoordsToPos for wrong length inputs
+    public void testNotJustTwoCharacters(){
+        //to long
+        assertNull(Chess.translateCoordsToPos("a22"));
+        assertNull(Chess.translateCoordsToPos("aa2"));
+
+        //to short
+        assertNull(Chess.translateCoordsToPos("a"));
+        assertNull(Chess.translateCoordsToPos("2"));
+    }
+
+    //tests the method translateCoordsToPos for wrong type inputs
+    public void testWrongCharacterInputs(){
+        //fliped
+        assertNull(Chess.translateCoordsToPos("2a"));
+        assertNull(Chess.translateCoordsToPos("5f"));
+
+        //only one type
+        assertNull(Chess.translateCoordsToPos("aa"));
+        assertNull(Chess.translateCoordsToPos("33"));
+    }
+
+    //tests the method translateCoordsToPos for wrong inputs
+    public void testCoordinateNotInBoard(){
+        //x to small and big
+        assertNull(Chess.translateCoordsToPos("A3"));
+        assertNull(Chess.translateCoordsToPos("j2"));
+
+        //y to small and big
+        assertNull(Chess.translateCoordsToPos("a0"));
+        assertNull(Chess.translateCoordsToPos("a9"));
+
+        //both to small and big
+        assertNull(Chess.translateCoordsToPos("A0"));
+        assertNull(Chess.translateCoordsToPos("j9"));
+    }
+
+    //tests the method translatePosToCoords for wrong Position inputs
+    public void testsPositionNotInBoard(){
+        //x to small and big
+        assertEquals(" 6", Chess.translatePosToCoords(new Point(-1, 2)));
+        assertEquals(" 6", Chess.translatePosToCoords(new Point(8, 2)));
+
+        //y to small and big
+        assertEquals("b ", Chess.translatePosToCoords(new Point(1, -1)));
+        assertEquals("b ", Chess.translatePosToCoords(new Point(1, 8)));
+
+        //both to small and big
+        assertEquals("  ", Chess.translatePosToCoords(new Point(-1, -1)));
+        assertEquals("  ", Chess.translatePosToCoords(new Point(8, 8)));
     }
 }
