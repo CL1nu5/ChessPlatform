@@ -1,9 +1,11 @@
 package GUI.SubObjects;
 
 import GUI.ChessPanel;
+import Support.AudioPlayer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 public class ServerPanel extends JPanel {
 
@@ -20,8 +22,7 @@ public class ServerPanel extends JPanel {
         //adding components
         addLabel("Start Server:");
         addLabel("start a server, your friend can join on");
-        serverButton = new RoundButton(0.4, "start");
-        this.add(serverButton);
+        addServerButton();
 
         //add separation
         addLabel("");
@@ -45,9 +46,7 @@ public class ServerPanel extends JPanel {
 
         this.add(ipSelection);
 
-        joinButton = new RoundButton(0.4, "join");
-        this.add(joinButton);
-
+        addJoinButton();
     }
 
     public void addLabel(String text) {
@@ -55,5 +54,27 @@ public class ServerPanel extends JPanel {
         label.setFont(new Font("Serif", Font.ITALIC, 18));
 
         this.add(label);
+    }
+
+    public void addServerButton(){
+        serverButton = new RoundButton(0.4, "start"){
+            @Override
+            public void clickAction(MouseEvent e){
+                AudioPlayer.playSound("res/sounds/click1.wav");
+                System.out.println("server start clicked");
+            }
+        };
+        this.add(serverButton);
+    }
+
+    public void addJoinButton(){
+        serverButton = new RoundButton(0.4, "start"){
+            @Override
+            public void clickAction(MouseEvent e){
+                AudioPlayer.playSound("res/sounds/click1.wav");
+                System.out.println("join clicked");
+            }
+        };
+        this.add(serverButton);
     }
 }

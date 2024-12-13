@@ -1,14 +1,16 @@
 package GUI.SubObjects;
 
 import GUI.ChessPanel;
+import Support.AudioPlayer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 public class LocalPanel extends JPanel {
 
-    JPanel localButton;
-    JPanel botButton;
+    RoundButton localButton;
+    RoundButton botButton;
 
     public LocalPanel(){
         this.setBackground(ChessPanel.LIGHT_COLOR);
@@ -20,8 +22,7 @@ public class LocalPanel extends JPanel {
         //adding components
         addLabel("Local:");
         addLabel("playing a game of chess against your friends or by yourself on one device");
-        localButton = new RoundButton(0.4, "play local");
-        this.add(localButton);
+        addLocalButton();
 
         //add separation
         addLabel("");
@@ -29,8 +30,7 @@ public class LocalPanel extends JPanel {
         //adding components
         addLabel("Bot:");
         addLabel("playing a game of chess against a self programed chess bot");
-        botButton = new RoundButton(0.4, "play against bot");
-        this.add(botButton);
+        addBotButton();
     }
 
     public void addLabel(String text) {
@@ -38,5 +38,27 @@ public class LocalPanel extends JPanel {
         label.setFont(new Font("Serif", Font.ITALIC, 18));
 
         this.add(label);
+    }
+
+    public void addLocalButton(){
+        localButton = new RoundButton(0.4, "play local"){
+            @Override
+            public void clickAction(MouseEvent e){
+                AudioPlayer.playSound("res/sounds/click1.wav");
+                System.out.println("local clicked");
+            }
+        };
+        this.add(localButton);
+    }
+
+    public void addBotButton(){
+        botButton = new RoundButton(0.4, "play against bot"){
+            @Override
+            public void clickAction(MouseEvent e){
+                AudioPlayer.playSound("res/sounds/click1.wav");
+                System.out.println("bot clicked");
+            }
+        };
+        this.add(botButton);
     }
 }
