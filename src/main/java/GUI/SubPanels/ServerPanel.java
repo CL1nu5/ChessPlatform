@@ -15,12 +15,12 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
-public class ServerPanel extends JPanel {
+public class ServerPanel extends JPanel{
 
     MenuPanel menuPanel;
 
     private RoundButton serverButton, joinButton;
-    JTextField ipSelection;
+    HintTextField ipSelection;
 
     public ServerPanel(MenuPanel menuPanel){
         this.menuPanel = menuPanel;
@@ -41,14 +41,30 @@ public class ServerPanel extends JPanel {
 
         //adding components
         addLabel("Join Server:");
-        addLabel("join the server of your friend (enter his ip below)");
+        addLabel("join the server of your friend");
 
-        ipSelection = new HintTextField("Enter IP");
-        this.add(ipSelection);
+        addIpSelection();
 
         addJoinButton();
     }
 
+    /* stating methods */
+    public void startServer(){
+        Server server = new Server(4891);
+        server.start();
+    }
+
+    public void joinServer(String ip){
+        //setting up game
+        Board board = new Board();
+        board.readPosition(new File("save/startPosition/defaultPosition.json"));
+
+        Client client = new Client(board, ip, 4891);
+
+        new ChessPanel(menuPanel.frame, client, new Dimension(1000, 800), board, Team.White);
+    }
+
+    /* adding component methods */
     public void addLabel(String text) {
         JLabel label = new JLabel(text, SwingUtilities.CENTER);
         label.setFont(new Font("Serif", Font.ITALIC, 18));
@@ -79,18 +95,14 @@ public class ServerPanel extends JPanel {
         this.add(serverButton);
     }
 
-    public void startServer(){
-        Server server = new Server(4891);
-        server.start();
-    }
-
-    public void joinServer(String ip){
-        //setting up game
-        Board board = new Board();
-        board.readPosition(new File("save/startPosition/defaultPosition.json"));
-
-        Client client = new Client(board, ip, 4891);
-
-        new ChessPanel(menuPanel.frame, client, new Dimension(1000, 800), board, Team.White);
+    public void addIpSelection(){
+        ipSelection = new HintTextField("Enter Ip here"){
+            @Override
+            public void enterPressed(){
+                AudioPlayer.playSound("res/sounds/enter.wav");
+                joinServer(ipSelection.getText());
+            }
+        };
+        this.add(ipSelection);
     }
 }

@@ -4,10 +4,12 @@ import GUI.ChessPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-public class HintTextField extends JTextField implements FocusListener {
+public class HintTextField extends JTextField implements FocusListener, ActionListener {
 
     private final String hintText;
     private boolean edited;
@@ -17,6 +19,7 @@ public class HintTextField extends JTextField implements FocusListener {
         this.edited = false;
 
         this.addFocusListener(this);
+        this.addActionListener(this);
 
         this.setText(hintText);
         this.setFont(new Font("Serif", Font.ITALIC, 18));
@@ -31,6 +34,7 @@ public class HintTextField extends JTextField implements FocusListener {
         this.setSelectedTextColor(ChessPanel.LIGHT_COLOR);
     }
 
+    /* hint text update */
 
     @Override
     public void focusGained(FocusEvent e) {
@@ -49,4 +53,12 @@ public class HintTextField extends JTextField implements FocusListener {
 
         edited = true;
     }
+
+    /* enter pressed */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        enterPressed();
+    }
+
+    public void enterPressed(){}
 }
