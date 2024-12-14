@@ -40,7 +40,7 @@ public class Client{
             Socket clientSocket = new Socket(ip, port);
             return new Transmitter(clientSocket);
         } catch (IOException e) {
-            logger.warning("Connection not possible");
+            logger.warning("Connection to:" + ip + ", not possible");
         }
         return null;
     }

@@ -1,6 +1,6 @@
 package GUI;
 
-import GUI.SubObjects.SelectionPanel;
+import GUI.SubPanels.SelectionPanel;
 
 import javax.swing.*;
 import java.awt.*;

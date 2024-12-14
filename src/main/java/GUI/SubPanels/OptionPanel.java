@@ -1,7 +1,8 @@
-package GUI.SubObjects;
+package GUI.SubPanels;
 
 import GUI.ChessPanel;
 import GUI.MenuPanel;
+import GUI.Utilities.SwitchButton;
 
 import javax.swing.*;
 import java.awt.*;

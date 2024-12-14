@@ -1,10 +1,13 @@
-package GUI.SubObjects;
+package GUI.SubPanels;
 
 import ChessObjects.Board;
 import ChessObjects.PieceTypes.Team;
 import Client.Client;
 import GUI.ChessPanel;
 import GUI.MenuPanel;
+import GUI.Utilities.HintTextField;
+import GUI.Utilities.RoundButton;
+import Server.Server;
 import Support.AudioPlayer;
 
 import javax.swing.*;
@@ -40,19 +43,7 @@ public class ServerPanel extends JPanel {
         addLabel("Join Server:");
         addLabel("join the server of your friend (enter his ip below)");
 
-        ipSelection = new JTextField("Enter ip");
-        ipSelection.setHorizontalAlignment(SwingConstants.CENTER);
-
-        ipSelection.setFont(new Font("Serif", Font.ITALIC, 18));
-        ipSelection.setMaximumSize(new Dimension(200, 20));
-        ipSelection.setBorder(null);
-
-        //color ip selection
-        ipSelection.setBackground(ChessPanel.LIGHT_COLOR);
-        ipSelection.setForeground(ChessPanel.MOVE_COLOR);
-        ipSelection.setSelectionColor(ChessPanel.MOVE_COLOR);
-        ipSelection.setSelectedTextColor(ChessPanel.LIGHT_COLOR);
-
+        ipSelection = new HintTextField("Enter IP");
         this.add(ipSelection);
 
         addJoinButton();
@@ -70,7 +61,8 @@ public class ServerPanel extends JPanel {
             @Override
             public void clickAction(MouseEvent e){
                 AudioPlayer.playSound("res/sounds/click1.wav");
-                System.out.println("server start clicked");
+                startServer();
+                joinServer("localhost");
             }
         };
         this.add(serverButton);
@@ -81,16 +73,24 @@ public class ServerPanel extends JPanel {
             @Override
             public void clickAction(MouseEvent e){
                 AudioPlayer.playSound("res/sounds/click1.wav");
-
-                //setting up game
-                Board board = new Board();
-                board.readPosition(new File("save/startPosition/defaultPosition.json"));
-
-                Client client = new Client(board, "localhost", 4891); //Todo ip selection
-
-                new ChessPanel(menuPanel.frame, client, new Dimension(1000, 800), board, Team.White);
+                joinServer(ipSelection.getText());
             }
         };
         this.add(serverButton);
+    }
+
+    public void startServer(){
+        Server server = new Server(4891);
+        server.start();
+    }
+
+    public void joinServer(String ip){
+        //setting up game
+        Board board = new Board();
+        board.readPosition(new File("save/startPosition/defaultPosition.json"));
+
+        Client client = new Client(board, ip, 4891);
+
+        new ChessPanel(menuPanel.frame, client, new Dimension(1000, 800), board, Team.White);
     }
 }

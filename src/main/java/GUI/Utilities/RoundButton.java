@@ -1,11 +1,10 @@
-package GUI.SubObjects;
+package GUI.Utilities;
 
 import GUI.ChessPanel;
 import Support.StringEditor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 

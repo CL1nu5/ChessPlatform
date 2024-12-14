@@ -1,6 +1,7 @@
-package GUI.SubObjects;
+package GUI.Utilities;
 
 import GUI.ChessPanel;
+import GUI.SubPanels.OptionPanel;
 import Support.AudioPlayer;
 
 import java.awt.*;
