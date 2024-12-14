@@ -54,3 +54,15 @@ Format:
   }
 ]
 ```
+
+## Team
+<hr>
+
+```json
+[
+  {
+    "colour": "(white, black)"
+  }
+]
+
+```

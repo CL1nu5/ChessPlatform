@@ -1,14 +1,12 @@
 package GUI.SubPanels;
 
 import ChessObjects.Board;
-import ChessObjects.PieceTypes.Team;
 import Client.Client;
 import GUI.ChessPanel;
 import GUI.MenuPanel;
 import GUI.Utilities.HintTextField;
 import GUI.Utilities.RoundButton;
 import GUI.Utilities.ServerStarter;
-import Server.Server;
 import Support.AudioPlayer;
 
 import javax.swing.*;
@@ -57,11 +55,9 @@ public class ServerPanel extends JPanel{
     public void joinServer(String ip){
         //setting up game
         Board board = new Board();
-        board.readPosition(new File("save/startPosition/defaultPosition.json"));
+        board.readPosition(new File("save/startPosition/defaultPosition.json")); //todo needs to be removed later
 
-        Client client = new Client(board, ip, 4891);
-
-        new ChessPanel(menuPanel.frame, client, new Dimension(1000, 800), board, Team.White);
+        Client client = new Client(ip, 4891, menuPanel.frame, new Dimension(1000, 800));
     }
 
     /* adding component methods */

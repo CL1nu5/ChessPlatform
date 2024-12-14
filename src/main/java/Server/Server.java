@@ -3,8 +3,7 @@ package Server;
 import Client.Transmitter;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import socketio.*;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -28,7 +27,7 @@ public class Server {
     /* control methods */
     //server listens for requests
     public void start(){
-        while (! serverSocket.isClosed()){
+        while (!serverSocket.serverSocket.isClosed()){
             Socket client = accept();
 
             if (client != null){
@@ -37,6 +36,12 @@ public class Server {
 
                 threads.add(thread);
             }
+
+            //stat game if two players are in queue
+            if (threads.size() == 2){
+                new Game(threads.get(0), threads.get(1));
+                break;
+            }
         }
     }
 
@@ -44,13 +49,11 @@ public class Server {
     public Socket accept(){
         try {
             Socket client = serverSocket.accept();
-            logger.info("Client accepted: " + client.getRemoteSocketAddress());
+            logger.info("Client accepted: " + client.socket.getLocalAddress());
 
             return client;
         } catch (IOException e) {
             return null;
         }
     }
-
-
 }

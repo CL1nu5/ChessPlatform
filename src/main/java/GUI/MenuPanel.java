@@ -18,6 +18,7 @@ public class MenuPanel extends JPanel {
 
     public MenuPanel(Frame frame) {
         this.frame = frame;
+        this.frame.setResizable(false);
 
         this.setPreferredSize(displaySize);
         this.setLayout(null);

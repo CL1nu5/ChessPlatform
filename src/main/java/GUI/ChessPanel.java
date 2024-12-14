@@ -27,20 +27,18 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
     public static final Color CAPTURE_MOVE_COLOR = new Color(27, 67, 50);
 
     //JObjects
-    Frame frame;
-    Dimension displaySize;
-    Point mousePos;
+    private Dimension displaySize;
+    private Point mousePos;
 
     //GameObjects
-    Board chessBoard;
-    Team direction;
-    Piece selectedPiece, grabbedPiece;
+    public Board chessBoard;
+    private Team direction;
+    private Piece selectedPiece, grabbedPiece;
 
     //Communication
-    Client client;
+    private final Client client;
 
     public ChessPanel(Frame frame, Client client, Dimension displaySize, Board chessBoard, Team direction) {
-        this.frame = frame;
         this.client = client;
         this.chessBoard = chessBoard;
         this.direction = direction;
