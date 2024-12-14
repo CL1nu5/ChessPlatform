@@ -56,6 +56,58 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
         frame.switchPanel(this);
     }
 
+    /* mouse listener methods - needed */
+    @Override
+    public void mousePressed(MouseEvent e) {
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
+        mousePos = e.getPoint();
+
+        Point fieldPos = sizes.getDirectionalFieldSquare(mousePos, direction);
+        if (fieldPos == null){
+            return;
+        }
+
+        Piece piece = chessBoard.getPiece(fieldPos);
+        if (piece != null && piece.team.isInSameTeam(chessBoard.activePlayer)){
+            selectedPiece = piece;
+            grabbedPiece = piece;
+        }
+
+        repaint();
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
+        mousePos = e.getPoint();
+
+        grabbedPiece = null;
+        repaint();
+
+        Point fieldPos = sizes.getDirectionalFieldSquare(mousePos, direction);
+        if (selectedPiece == null || fieldPos == null){
+            return;
+        }
+        if (selectedPiece.currentPosition.equals(fieldPos)){
+            return;
+        }
+
+        for (Move move : client.getPossibleMoves(selectedPiece)){
+            if (fieldPos.equals(move.postponedPosition)){
+                client.executeMove(move);
+            }
+        }
+
+        selectedPiece = null;
+        repaint();
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        mousePos = e.getPoint();
+        repaint();
+    }
+
     /* paint methods */
     public void paint(Graphics g) {
         super.paint(g);
@@ -182,76 +234,13 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(pieceImage, bounds.x, bounds.y, bounds.width, bounds.height, null);
     }
 
-    /* mouse listener methods - needed */
-    @Override
-    public void mousePressed(MouseEvent e) {
-        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
-        mousePos = e.getPoint();
-
-        Point fieldPos = sizes.getDirectionalFieldSquare(mousePos, direction);
-        if (fieldPos == null){
-            return;
-        }
-
-        Piece piece = chessBoard.getPiece(fieldPos);
-        if (piece != null && piece.team.isInSameTeam(chessBoard.activePlayer)){
-            selectedPiece = piece;
-            grabbedPiece = piece;
-        }
-
-        repaint();
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
-        mousePos = e.getPoint();
-
-        grabbedPiece = null;
-        repaint();
-
-        Point fieldPos = sizes.getDirectionalFieldSquare(mousePos, direction);
-        if (selectedPiece == null || fieldPos == null){
-            return;
-        }
-        if (selectedPiece.currentPosition.equals(fieldPos)){
-            return;
-        }
-
-        for (Move move : client.getPossibleMoves(selectedPiece)){
-            if (fieldPos.equals(move.postponedPosition)){
-                client.executeMove(move);
-            }
-        }
-
-        selectedPiece = null;
-        repaint();
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        mousePos = e.getPoint();
-        repaint();
-    }
-
     /* mouse listener methods - not needed */
     @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
+    public void mouseClicked(MouseEvent e) {}
     @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
+    public void mouseEntered(MouseEvent e) {}
     @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
-
+    public void mouseExited(MouseEvent e) {}
     @Override
-    public void mouseMoved(MouseEvent e) {
-
-    }
+    public void mouseMoved(MouseEvent e) {}
 }
