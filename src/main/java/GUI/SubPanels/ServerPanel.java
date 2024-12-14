@@ -7,6 +7,7 @@ import GUI.ChessPanel;
 import GUI.MenuPanel;
 import GUI.Utilities.HintTextField;
 import GUI.Utilities.RoundButton;
+import GUI.Utilities.ServerStarter;
 import Server.Server;
 import Support.AudioPlayer;
 
@@ -50,8 +51,7 @@ public class ServerPanel extends JPanel{
 
     /* stating methods */
     public void startServer(){
-        Server server = new Server(4891);
-        server.start();
+        new ServerStarter(4891).start();
     }
 
     public void joinServer(String ip){
