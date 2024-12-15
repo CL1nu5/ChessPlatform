@@ -124,7 +124,6 @@ public class Client extends Thread{
                 }
 
                 case "+expecting-move+" -> {
-                    System.out.println("abel to move");
                     waiting = false;
                 }
 

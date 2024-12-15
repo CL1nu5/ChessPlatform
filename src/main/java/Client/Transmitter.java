@@ -39,14 +39,57 @@ public class Transmitter {
 
     /* transmitting methods */
     //sends a message via protocol: doc/Server-Client-Protocol.md
-    public void transmitMessage(String message, int depth){
+    public boolean transmitMessage(String message, int depth){
+        if (depth == 4){
+            return false;
+        }
+
+        //handshake
+        sendCharacter(ENQ);
+
+        if (readCharacter() != ACK)
+            return false;
+
+        //transmit
+        sendCharacter(SOH);
         sendMessage(StringEditor.getLineCounter(message) + "\n");
+
+        sendCharacter(STX);
         sendMessage(message);
+        sendCharacter(ETX);
+
+        int response = readCharacter();
+        if (response == ACK)
+            return true;
+        return transmitMessage(message, ++depth);
     }
 
     public ArrayList<String> receiveMessage(){
+        //handshake
+        if (readCharacter() != ENQ)
+            return receiveMessage();
+        sendCharacter(ACK);
+
+        //receive
+        if (readCharacter() != SOH)
+            return signalWrongReceive();
         int lineCount = Integer.parseInt(readLine());
-        return readMessage(lineCount);
+
+        if (readCharacter() != STX)
+            return signalWrongReceive();
+
+        ArrayList<String> message = readMessage(lineCount);
+
+        if (readCharacter() != ETX)
+            return signalWrongReceive();
+
+        sendCharacter(ACK);
+        return message;
+    }
+
+    private ArrayList<String> signalWrongReceive(){
+        sendCharacter(NAK);
+        return receiveMessage();
     }
 
     //receives a message via protocol: doc/Server-Client-Protocol.md
@@ -60,6 +103,18 @@ public class Transmitter {
         }
     }
 
+    public void sendCharacter(int c){
+        try {
+            clientSocket.write(((char) c) + "\n");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /* read methods */
+    public int readCharacter(){
+        return readLine().charAt(0);
+    }
     private ArrayList<String> readMessage(int lineCount){
         ArrayList<String> messages = new ArrayList<>();
 

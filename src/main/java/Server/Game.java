@@ -120,8 +120,6 @@ public class Game extends Thread{
         ArrayList<String> message = t.receiveMessage();
         String json = StringEditor.turnJsonListIntoString(message);
 
-        System.out.println(json);
-
         return new Move(json, chessBord);
     }
 
