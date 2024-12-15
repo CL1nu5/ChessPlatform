@@ -11,11 +11,9 @@ import Support.StringEditor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 
-public class ChessPanel extends JPanel implements MouseListener, MouseMotionListener {
+public class ChessPanel extends JPanel implements MouseListener, MouseMotionListener, ComponentListener {
     //Constants
     public static final Color LIGHT_COLOR = new Color(216, 243, 220);
     public static final Color DARK_COLOR = new Color(149, 213, 178);
@@ -35,12 +33,12 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
     private Team direction;
     private Piece selectedPiece, grabbedPiece;
 
-    //Communication
+    //communication
     private final Client client;
 
     public ChessPanel(Frame frame, Client client, Dimension displaySize, Board chessBoard, Team direction) {
-        this.client = client;
         this.chessBoard = chessBoard;
+        this.client = client;
         this.direction = direction;
         this.displaySize = displaySize;
 
@@ -50,6 +48,7 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
 
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
+        this.addComponentListener(this);
 
         frame.switchPanel(this);
     }
@@ -90,7 +89,7 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
             return;
         }
 
-        for (Move move : client.getPossibleMoves(selectedPiece)){
+        for (Move move : client.getMoves(selectedPiece)){
             if (fieldPos.equals(move.postponedPosition)){
                 client.executeMove(move);
             }
@@ -168,7 +167,7 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
         DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
         paintField(g, sizes, selectedPiece.currentPosition, SELECTED_PIECE_COLOR);
 
-        for (Move move : client.getPossibleMoves(selectedPiece)) {
+        for (Move move : client.getMoves(selectedPiece)) {
             if (move.isCaptureMove()) {
                 paintField(g, sizes, move.postponedPosition, CAPTURE_MOVE_COLOR);
             } else {
@@ -232,6 +231,15 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(pieceImage, bounds.x, bounds.y, bounds.width, bounds.height, null);
     }
 
+    /* adapting to frame changes */
+    @Override
+    public void componentResized(ComponentEvent e) {
+        Dimension frameSize = e.getComponent().getSize();
+
+        displaySize = new Dimension(frameSize.width - frameSize.width % 10, frameSize.height - frameSize.height % 10);
+        repaint();
+    }
+
     /* mouse listener methods - not needed */
     @Override
     public void mouseClicked(MouseEvent e) {}
@@ -241,4 +249,19 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
     public void mouseExited(MouseEvent e) {}
     @Override
     public void mouseMoved(MouseEvent e) {}
+
+    @Override
+    public void componentMoved(ComponentEvent e) {
+
+    }
+
+    @Override
+    public void componentShown(ComponentEvent e) {
+
+    }
+
+    @Override
+    public void componentHidden(ComponentEvent e) {
+
+    }
 }

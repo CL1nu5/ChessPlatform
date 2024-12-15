@@ -59,12 +59,9 @@ public class ServerPanel extends JPanel{
     }
 
     public void joinServer(String ip){
-        //setting up game
-        Board board = new Board();
-        board.readPosition(new File("save/startPosition/defaultPosition.json")); //todo needs to be removed later
-
         try {
-            Client client = new Client(ip, 4891, menuPanel.frame, new Dimension(1000, 800));
+            menuPanel.frame.setResizable(true);
+            new Client(ip, 4891, menuPanel.frame, new Dimension(1000, 800));
         } catch(ConnectException e){
             infoLabel.setText("Connection failed!");
         }

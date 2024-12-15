@@ -18,8 +18,8 @@ import java.util.logging.Logger;
 
 public class Client{
 
-    private ChessPanel panel;
-    private Transmitter transmitter;
+    private final ChessPanel panel;
+    private final Transmitter transmitter;
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -33,8 +33,10 @@ public class Client{
 
         //getting bord and team
         Team team = getTeam();
-        System.out.println("got team");
+        logger.info("Team received");
+
         Board chessBord = getBord();
+        logger.info("Chess bord received");
 
         //starting panel
         panel = new ChessPanel(frame, this, displaySize, chessBord, team);
@@ -43,7 +45,6 @@ public class Client{
     /* interaction Methods */
     public Team getTeam(){
         String string = StringEditor.turnJsonListIntoString(transmitter.receiveMessage());
-        System.out.println("got massage");
         return Team.getTeamViaJson(string);
     }
 
@@ -54,8 +55,8 @@ public class Client{
         return board;
     }
 
-    public ArrayList<Move> getPossibleMoves(Piece piece){
-        return piece.getMoves(); // todo
+    public ArrayList<Move> getMoves(Piece piece){
+        return piece.getMoves();
     }
 
     public boolean executeMove(Move move){
