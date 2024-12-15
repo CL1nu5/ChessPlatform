@@ -146,6 +146,7 @@ public class Move implements Cloneable{
     private Piece getPieceFromHash(String position){
         Point pos = getPositionFromHash(position);
 
+
         if (pos == null){
             return null;
         }
@@ -213,7 +214,7 @@ public class Move implements Cloneable{
     }
 
     private String getStringLocation(Point position){
-        return position.x + "," + position.y;
+        return position.x + ";" + position.y;
     }
 
     /* fundamental objekt methods */

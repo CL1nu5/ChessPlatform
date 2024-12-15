@@ -16,7 +16,7 @@ import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-public class Client {
+public class Client extends Thread{
 
     private final ChessPanel panel;
     private final Transmitter transmitter;
@@ -47,7 +47,7 @@ public class Client {
         panel = new ChessPanel(frame, this, displaySize, chessBord, team);
 
         //getting command
-        getCommand();
+        start();
     }
 
     /* interaction Methods */
@@ -68,8 +68,16 @@ public class Client {
     }
 
     public boolean executeMove(Move move){
-        panel.chessBoard.executeMove(move);
-        return true; // todo
+        if (waiting){
+            return false;
+        }
+
+        transmitter.transmitMessage(move.getAsJson(), 0);
+        chessBord.executeMove(move);
+
+        waiting = true;
+
+        return true;
     }
 
     /* socket methods */
@@ -84,24 +92,45 @@ public class Client {
     }
 
     /* constant reading */
-    public void getCommand(){
+
+    @Override
+    public void run() {
         waiting = true;
-        String command = transmitter.receiveMessage().get(0);
+        getCommand();
+    }
 
-        switch (command){
-            case "+enemy-move+" -> {
-                ArrayList<String> message = transmitter.receiveMessage();
-                String json = StringEditor.turnJsonListIntoString(message);
-                chessBord.executeMove(new Move(json, chessBord));
-                getCommand();
+    public void getCommand(){
+        while (true) {
+            //System.out.println("checking");
+
+            if (!waiting){
+                try {
+                    Thread.sleep(100); // Sleep for 100ms to reduce CPU usage
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+                continue;
             }
 
-            case "+expecting-move+" -> {
-                waiting = false;
-            }
+            String command = transmitter.receiveMessage().getFirst();
 
-            default -> {
-                logger.warning("Command: " + command + ", not found!");
+            switch (command) {
+                case "+enemy-move+" -> {
+                    ArrayList<String> message = transmitter.receiveMessage();
+                    String json = StringEditor.turnJsonListIntoString(message);
+                    chessBord.executeMove(new Move(json, chessBord));
+                    panel.repaint();
+                }
+
+                case "+expecting-move+" -> {
+                    System.out.println("abel to move");
+                    waiting = false;
+                }
+
+                default -> {
+                    logger.warning("Command: " + command + ", not found!");
+                }
             }
         }
     }

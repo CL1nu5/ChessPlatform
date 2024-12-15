@@ -1,8 +1,11 @@
 package Server;
 
 import ChessObjects.Board;
+import ChessObjects.Move;
 import ChessObjects.PieceTypes.Team;
+import Client.Transmitter;
 import Support.FileEditor;
+import Support.StringEditor;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,17 +41,46 @@ public class Game extends Thread{
 
         //transmit bords
         transmitBords();
+
+        //start game loop
+        loop();
+    }
+
+    /* game loop */
+    private void loop(){
+        int activePlayer = getIndexOfCurrentPlayer();
+
+        Move move = getNextMove(activePlayer);
+
+        communicateMove(1 - activePlayer, move); // comunicate the move
+        chessBord.executeMove(move);
+
+        //check if someone has won
+        if (chessBord.getMoves().isEmpty()){
+            System.out.println(teams[activePlayer].string + " has won");
+            return;
+        }
+
+        loop();
+    }
+
+    //gets the index of the team in charge
+    private int getIndexOfCurrentPlayer(){
+        if (teams[0].isInSameTeam(chessBord.activePlayer)){
+            return 0;
+        }
+        return 1;
     }
 
     /* transmit bord */
-    public void transmitBords(){
+    private void transmitBords(){
         for (int i = 0; i < players.length; i++){
             transmitTeam(i);
             transmitBord(i);
         }
     }
 
-    public void transmitTeam(int index){
+    private void transmitTeam(int index){
 
         String json =
                 "[\n" +
@@ -60,7 +92,7 @@ public class Game extends Thread{
         players[index].transmitter.transmitMessage(json, 0);
     }
 
-    public void transmitBord(int index){
+    private void transmitBord(int index){
         FileEditor fileEditor = new FileEditor();
 
         ArrayList<String> bordString = fileEditor.read(new File("save/startPosition/defaultPosition.json"));
@@ -74,6 +106,29 @@ public class Game extends Thread{
     }
 
     /* transmit move */
+    private Move getNextMove(int player){
+        Transmitter t = players[player].transmitter;
 
+        t.transmitMessage("+expecting-move+\n", 0);
 
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        ArrayList<String> message = t.receiveMessage();
+        String json = StringEditor.turnJsonListIntoString(message);
+
+        System.out.println(json);
+
+        return new Move(json, chessBord);
+    }
+
+    private void communicateMove(int player, Move move){
+        Transmitter t = players[player].transmitter;
+
+        t.transmitMessage("+enemy-move+\n", 0);
+        t.transmitMessage(move.getAsJson(), 0);
+    }
 }

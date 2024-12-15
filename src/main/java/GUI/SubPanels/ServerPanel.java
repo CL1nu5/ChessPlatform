@@ -61,6 +61,7 @@ public class ServerPanel extends JPanel{
     public void joinServer(String ip){
         try {
             new Client(ip, 4891, menuPanel.frame, new Dimension(1000, 800));
+
         } catch(ConnectException e){
             infoLabel.setText("Connection failed!");
         }
