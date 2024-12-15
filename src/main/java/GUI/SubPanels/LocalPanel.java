@@ -2,6 +2,7 @@ package GUI.SubPanels;
 
 import GUI.ChessPanel;
 import GUI.Utilities.RoundButton;
+import GUI.Utilities.Slider;
 import Support.AudioPlayer;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ public class LocalPanel extends JPanel {
 
     RoundButton localButton;
     RoundButton botButton;
+    Slider slider;
 
     public LocalPanel(){
         this.setBackground(ChessPanel.LIGHT_COLOR);
@@ -23,6 +25,8 @@ public class LocalPanel extends JPanel {
         //adding components
         addLabel("Local:");
         addLabel("playing a game of chess against your friends or by yourself on one device");
+        slider = new Slider(0, "stays", "turns");
+        this.add(slider);
         addLocalButton();
 
         //add separation
