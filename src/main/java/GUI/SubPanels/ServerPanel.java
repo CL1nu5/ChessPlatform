@@ -13,13 +13,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.net.ConnectException;
 
 public class ServerPanel extends JPanel{
 
     MenuPanel menuPanel;
 
     private RoundButton serverButton, joinButton;
-    HintTextField ipSelection;
+    private HintTextField ipSelection;
+    private JLabel infoLabel;
 
     public ServerPanel(MenuPanel menuPanel){
         this.menuPanel = menuPanel;
@@ -45,6 +47,10 @@ public class ServerPanel extends JPanel{
         addIpSelection();
 
         addJoinButton();
+
+        infoLabel = new JLabel("", SwingUtilities.CENTER);
+        infoLabel.setFont(new Font("Serif", Font.ITALIC, 16));
+        this.add(infoLabel);
     }
 
     /* stating methods */
@@ -57,7 +63,11 @@ public class ServerPanel extends JPanel{
         Board board = new Board();
         board.readPosition(new File("save/startPosition/defaultPosition.json")); //todo needs to be removed later
 
-        Client client = new Client(ip, 4891, menuPanel.frame, new Dimension(1000, 800));
+        try {
+            Client client = new Client(ip, 4891, menuPanel.frame, new Dimension(1000, 800));
+        } catch(ConnectException e){
+            infoLabel.setText("Connection failed!");
+        }
     }
 
     /* adding component methods */

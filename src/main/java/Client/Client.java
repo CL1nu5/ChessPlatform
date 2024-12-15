@@ -11,6 +11,8 @@ import Support.StringEditor;
 import java.awt.*;
 import java.io.*;
 import socketio.Socket;
+
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -22,10 +24,12 @@ public class Client{
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     //constructor stating connection
-    public Client(String ip, int port, Frame frame, Dimension displaySize){
+    public Client(String ip, int port, Frame frame, Dimension displaySize) throws ConnectException{
         //connection
         transmitter = connect(ip, port);
-        transmitter.connect();
+        if(!transmitter.connect()){
+            throw new ConnectException("Can't connect to server!");
+        }
 
         //getting bord and team
         Team team = getTeam();

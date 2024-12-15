@@ -24,8 +24,8 @@ public class Transmitter {
     }
 
     /* connection methods */
-    public void connect(){
-        clientSocket.connect();
+    public boolean connect(){
+        return clientSocket.connect();
     }
 
     private boolean stopConnection(){
