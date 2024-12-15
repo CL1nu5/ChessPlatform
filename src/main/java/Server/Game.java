@@ -73,4 +73,7 @@ public class Game extends Thread{
         players[index].transmitter.transmitMessage(json.toString(), 0);
     }
 
+    /* transmit move */
+
+
 }

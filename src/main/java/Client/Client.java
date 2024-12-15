@@ -16,12 +16,16 @@ import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-public class Client{
+public class Client {
 
     private final ChessPanel panel;
     private final Transmitter transmitter;
 
+    private final Board chessBord;
+
     private final Logger logger = Logger.getLogger(this.getClass().getName());
+
+    private boolean waiting;
 
     //constructor stating connection
     public Client(String ip, int port, Frame frame, Dimension displaySize) throws ConnectException{
@@ -35,11 +39,15 @@ public class Client{
         Team team = getTeam();
         logger.info("Team received");
 
-        Board chessBord = getBord();
+        chessBord = getBord();
         logger.info("Chess bord received");
 
         //starting panel
+        frame.setResizable(true);
         panel = new ChessPanel(frame, this, displaySize, chessBord, team);
+
+        //getting command
+        getCommand();
     }
 
     /* interaction Methods */
@@ -73,5 +81,28 @@ public class Client{
             logger.warning("Connection to: " + ip + ", not possible");
         }
         return null;
+    }
+
+    /* constant reading */
+    public void getCommand(){
+        waiting = true;
+        String command = transmitter.receiveMessage().get(0);
+
+        switch (command){
+            case "+enemy-move+" -> {
+                ArrayList<String> message = transmitter.receiveMessage();
+                String json = StringEditor.turnJsonListIntoString(message);
+                chessBord.executeMove(new Move(json, chessBord));
+                getCommand();
+            }
+
+            case "+expecting-move+" -> {
+                waiting = false;
+            }
+
+            default -> {
+                logger.warning("Command: " + command + ", not found!");
+            }
+        }
     }
 }

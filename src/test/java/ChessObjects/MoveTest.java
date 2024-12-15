@@ -1,6 +1,7 @@
 package ChessObjects;
 
 import ChessObjects.PieceTypes.Team;
+import ChessObjects.Pieces.King;
 import ChessObjects.Pieces.Pawn;
 import ChessObjects.Pieces.Rook;
 import Support.FileEditor;
@@ -96,5 +97,22 @@ public class MoveTest extends TestCase {
         //getting move
         Move move = new Move(json, board);
         System.out.println(move);
+    }
+
+    public void testGetJsonFromMove(){
+        //setup
+        Board board = new Board();
+
+        Pawn pawn = new Pawn(new Point(1, 1), Team.White, board);
+        pawn.placeOnBoard();
+
+        Rook rook = new Rook(new Point(0, 7), Team.White, board);
+        King king = new King(new Point(3, 7), Team.White, board);
+        rook.placeOnBoard();
+        king.placeOnBoard();
+
+        //test
+        System.out.println(pawn.getMoves().getFirst().getAsJson());
+        System.out.println(king.getMoves().getLast().getAsJson());
     }
 }

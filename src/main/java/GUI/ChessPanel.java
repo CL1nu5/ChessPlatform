@@ -249,19 +249,10 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
     public void mouseExited(MouseEvent e) {}
     @Override
     public void mouseMoved(MouseEvent e) {}
-
     @Override
-    public void componentMoved(ComponentEvent e) {
-
-    }
-
+    public void componentMoved(ComponentEvent e) {}
     @Override
-    public void componentShown(ComponentEvent e) {
-
-    }
-
+    public void componentShown(ComponentEvent e) {}
     @Override
-    public void componentHidden(ComponentEvent e) {
-
-    }
+    public void componentHidden(ComponentEvent e) {}
 }
