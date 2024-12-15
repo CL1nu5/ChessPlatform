@@ -11,11 +11,9 @@ import Support.StringEditor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 
-public class ChessPanel extends JPanel implements MouseListener, MouseMotionListener {
+public class ChessPanel extends JPanel implements MouseListener, MouseMotionListener, ComponentListener {
     //Constants
     public static final Color LIGHT_COLOR = new Color(216, 243, 220);
     public static final Color DARK_COLOR = new Color(149, 213, 178);
@@ -27,22 +25,20 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
     public static final Color CAPTURE_MOVE_COLOR = new Color(27, 67, 50);
 
     //JObjects
-    Frame frame;
-    Dimension displaySize;
-    Point mousePos;
+    private Dimension displaySize;
+    private Point mousePos;
 
     //GameObjects
-    Board chessBoard;
-    Team direction;
-    Piece selectedPiece, grabbedPiece;
+    public Board chessBoard;
+    private Team direction;
+    private Piece selectedPiece, grabbedPiece;
 
-    //Communication
-    Client client;
+    //communication
+    private final Client client;
 
     public ChessPanel(Frame frame, Client client, Dimension displaySize, Board chessBoard, Team direction) {
-        this.frame = frame;
-        this.client = client;
         this.chessBoard = chessBoard;
+        this.client = client;
         this.direction = direction;
         this.displaySize = displaySize;
 
@@ -52,8 +48,61 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
 
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
+        this.addComponentListener(this);
 
         frame.switchPanel(this);
+    }
+
+    /* mouse listener methods - needed */
+    @Override
+    public void mousePressed(MouseEvent e) {
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
+        mousePos = e.getPoint();
+
+        Point fieldPos = sizes.getDirectionalFieldSquare(mousePos, direction);
+        if (fieldPos == null){
+            return;
+        }
+
+        Piece piece = chessBoard.getPiece(fieldPos);
+        if (piece != null && piece.team.isInSameTeam(chessBoard.activePlayer)){
+            selectedPiece = piece;
+            grabbedPiece = piece;
+        }
+
+        repaint();
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
+        mousePos = e.getPoint();
+
+        grabbedPiece = null;
+        repaint();
+
+        Point fieldPos = sizes.getDirectionalFieldSquare(mousePos, direction);
+        if (selectedPiece == null || fieldPos == null){
+            return;
+        }
+        if (selectedPiece.currentPosition.equals(fieldPos)){
+            return;
+        }
+
+        for (Move move : client.getMoves(selectedPiece)){
+            if (fieldPos.equals(move.postponedPosition)){
+                client.executeMove(move);
+            }
+        }
+
+        selectedPiece = null;
+        repaint();
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        mousePos = e.getPoint();
+        repaint();
     }
 
     /* paint methods */
@@ -118,7 +167,7 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
         DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
         paintField(g, sizes, selectedPiece.currentPosition, SELECTED_PIECE_COLOR);
 
-        for (Move move : client.getPossibleMoves(selectedPiece)) {
+        for (Move move : client.getMoves(selectedPiece)) {
             if (move.isCaptureMove()) {
                 paintField(g, sizes, move.postponedPosition, CAPTURE_MOVE_COLOR);
             } else {
@@ -182,76 +231,28 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
         g.drawImage(pieceImage, bounds.x, bounds.y, bounds.width, bounds.height, null);
     }
 
-    /* mouse listener methods - needed */
+    /* adapting to frame changes */
     @Override
-    public void mousePressed(MouseEvent e) {
-        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
-        mousePos = e.getPoint();
+    public void componentResized(ComponentEvent e) {
+        Dimension frameSize = e.getComponent().getSize();
 
-        Point fieldPos = sizes.getDirectionalFieldSquare(mousePos, direction);
-        if (fieldPos == null){
-            return;
-        }
-
-        Piece piece = chessBoard.getPiece(fieldPos);
-        if (piece != null && piece.team.isInSameTeam(chessBoard.activePlayer)){
-            selectedPiece = piece;
-            grabbedPiece = piece;
-        }
-
-        repaint();
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
-        mousePos = e.getPoint();
-
-        grabbedPiece = null;
-        repaint();
-
-        Point fieldPos = sizes.getDirectionalFieldSquare(mousePos, direction);
-        if (selectedPiece == null || fieldPos == null){
-            return;
-        }
-        if (selectedPiece.currentPosition.equals(fieldPos)){
-            return;
-        }
-
-        for (Move move : client.getPossibleMoves(selectedPiece)){
-            if (fieldPos.equals(move.postponedPosition)){
-                client.executeMove(move);
-            }
-        }
-
-        selectedPiece = null;
-        repaint();
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        mousePos = e.getPoint();
+        displaySize = new Dimension(frameSize.width - frameSize.width % 10, frameSize.height - frameSize.height % 10);
         repaint();
     }
 
     /* mouse listener methods - not needed */
     @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
+    public void mouseClicked(MouseEvent e) {}
     @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
+    public void mouseEntered(MouseEvent e) {}
     @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
-
+    public void mouseExited(MouseEvent e) {}
     @Override
-    public void mouseMoved(MouseEvent e) {
-
-    }
+    public void mouseMoved(MouseEvent e) {}
+    @Override
+    public void componentMoved(ComponentEvent e) {}
+    @Override
+    public void componentShown(ComponentEvent e) {}
+    @Override
+    public void componentHidden(ComponentEvent e) {}
 }

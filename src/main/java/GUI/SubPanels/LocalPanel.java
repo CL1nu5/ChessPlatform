@@ -1,6 +1,7 @@
-package GUI.SubObjects;
+package GUI.SubPanels;
 
 import GUI.ChessPanel;
+import GUI.Utilities.RoundButton;
 import Support.AudioPlayer;
 
 import javax.swing.*;

@@ -1,17 +1,15 @@
 package Client;
 
 import Support.StringEditor;
+import socketio.Socket;
 
 import java.io.*;
-import java.net.Socket;
 import java.util.ArrayList;
 
 public class Transmitter {
 
     //socket
-    private Socket clientSocket;
-    private PrintWriter out;
-    private BufferedReader in;
+    final Socket clientSocket;
 
     //control characters
     public static final int SOH = 0x01;
@@ -22,40 +20,26 @@ public class Transmitter {
     public static final int NAK = 0x15;
 
     public Transmitter(Socket clientSocket){
-        if(!startConnection(clientSocket)){
-            throw new RuntimeException("No connection possible");
-        }
+        this.clientSocket = clientSocket;
     }
 
     /* connection methods */
-    private boolean startConnection(Socket clientSocket){
-        try {
-            this.clientSocket = clientSocket;
-            out = new PrintWriter(clientSocket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-            return clientSocket.isConnected();
-        } catch (IOException e) {
-            return false;
-        }
+    public boolean connect(){
+        return clientSocket.connect();
     }
 
     private boolean stopConnection(){
         try {
             clientSocket.close();
-            in.close();
-            out.close();
-
         } catch (IOException e) {
             return false;
         }
-
         return true;
     }
 
     /* transmitting methods */
     //sends a message via protocol: doc/Server-Client-Protocol.md
-    private boolean transmitMessage(String message, int depth){
+    public boolean transmitMessage(String message, int depth){
         if (depth == 4){
             return false;
         }
@@ -80,7 +64,7 @@ public class Transmitter {
         return transmitMessage(message, ++depth);
     }
 
-    private ArrayList<String> receiveMessage(){
+    public ArrayList<String> receiveMessage(){
         //handshake
         if (readCharacter() != ENQ)
             return receiveMessage();
@@ -89,7 +73,6 @@ public class Transmitter {
         //receive
         if (readCharacter() != SOH)
             return signalWrongReceive();
-
         int lineCount = Integer.parseInt(readLine());
 
         if (readCharacter() != STX)
@@ -113,26 +96,30 @@ public class Transmitter {
 
     /* sending methods */
     private void sendMessage(String message){
-        out.write(message);
-    }
-
-    private void sendCharacter(int c){
-        out.write(c);
-    }
-
-    /* read methods */
-    private int readCharacter(){
         try {
-            return in.read();
+            clientSocket.write(message);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void sendCharacter(int c){
+        try {
+            clientSocket.write(((char) c) + "\n");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /* read methods */
+    public int readCharacter(){
+        return readLine().charAt(0);
     }
     private ArrayList<String> readMessage(int lineCount){
         ArrayList<String> messages = new ArrayList<>();
 
         for (int i = 0; i < lineCount; i++){
-            messages.add(readLine() + "\n");
+            messages.add(readLine());
         }
 
         return messages;
@@ -140,7 +127,7 @@ public class Transmitter {
 
     private String readLine(){
         try {
-            return in.readLine();
+            return clientSocket.readLine();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -43,14 +43,25 @@ Format:
     "moving-piece": "2,4 or 1,4, ...",
     "captured-piece": "2,4 or 1,4, ...",
     "postponed-position": "2,4 or 1,4, ...",
-    
     "connected-move": 
     {
       "moving-piece": "2,4 or 1,4, ...",
-      "captured-piece": "2,4 or 1,4, ...",
+      "captured-piece": "",
       "postponed-position": "2,4 or 1,4, ...",
       "connected-move": ""
     }
   }
 ]
+```
+
+## Team
+<hr>
+
+```json
+[
+  {
+    "colour": "(white, black)"
+  }
+]
+
 ```

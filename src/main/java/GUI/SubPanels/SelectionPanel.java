@@ -1,4 +1,4 @@
-package GUI.SubObjects;
+package GUI.SubPanels;
 
 import GUI.ChessPanel;
 import GUI.MenuPanel;

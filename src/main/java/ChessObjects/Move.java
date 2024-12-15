@@ -146,6 +146,7 @@ public class Move implements Cloneable{
     private Piece getPieceFromHash(String position){
         Point pos = getPositionFromHash(position);
 
+
         if (pos == null){
             return null;
         }
@@ -163,6 +164,57 @@ public class Move implements Cloneable{
         int x = Integer.parseInt(vals[0]), y = Integer.parseInt(vals[1]);
 
         return new Point(x, y);
+    }
+
+    /* getting the move as a json */
+    public String getAsJson(){
+        return "[\n" +
+                getMoveJson(1) +
+                "]\n";
+    }
+
+    private String getMoveJson(int depth){
+        StringBuilder s = new StringBuilder();
+        String indent = getIndentation(depth);
+        String indentContent = getIndentation(depth + 1);
+
+        s.append(indent).append("{\n");
+
+        s.append(indentContent).append("\"moving-piece\": \"").append(getStringLocation(movingPiece.currentPosition)).append("\",\n");
+
+        //captured piece
+        s.append(indentContent).append("\"captured-piece\": \"");
+        if (capturedPiece == null){
+            s.append("\",\n");
+        }
+        else {
+            s.append(getStringLocation(capturedPiece.currentPosition)).append("\",\n");
+        }
+
+        s.append(indentContent).append("\"postponed-position\": \"").append(getStringLocation(postponedPosition)).append("\",\n");
+
+        //connected move
+        s.append(indentContent).append("\"connected-move\": ");
+        if (connectedMove == null){
+            s.append("\"\"\n");
+        }
+        else {
+            s.append("\n");
+            s.append(connectedMove.getMoveJson(depth + 1));
+        }
+
+        //end
+        s.append(indent).append("}\n");
+
+        return s.toString();
+    }
+
+    private String getIndentation(int depth){
+        return "\t".repeat(Math.max(0, depth));
+    }
+
+    private String getStringLocation(Point position){
+        return position.x + ";" + position.y;
     }
 
     /* fundamental objekt methods */

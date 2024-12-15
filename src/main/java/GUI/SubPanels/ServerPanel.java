@@ -1,23 +1,27 @@
-package GUI.SubObjects;
+package GUI.SubPanels;
 
 import ChessObjects.Board;
-import ChessObjects.PieceTypes.Team;
 import Client.Client;
 import GUI.ChessPanel;
 import GUI.MenuPanel;
+import GUI.Utilities.HintTextField;
+import GUI.Utilities.RoundButton;
+import GUI.Utilities.ServerStarter;
 import Support.AudioPlayer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.net.ConnectException;
 
-public class ServerPanel extends JPanel {
+public class ServerPanel extends JPanel{
 
     MenuPanel menuPanel;
 
     private RoundButton serverButton, joinButton;
-    JTextField ipSelection;
+    private HintTextField ipSelection;
+    private JLabel infoLabel;
 
     public ServerPanel(MenuPanel menuPanel){
         this.menuPanel = menuPanel;
@@ -38,26 +42,32 @@ public class ServerPanel extends JPanel {
 
         //adding components
         addLabel("Join Server:");
-        addLabel("join the server of your friend (enter his ip below)");
+        addLabel("join the server of your friend");
 
-        ipSelection = new JTextField("Enter ip");
-        ipSelection.setHorizontalAlignment(SwingConstants.CENTER);
-
-        ipSelection.setFont(new Font("Serif", Font.ITALIC, 18));
-        ipSelection.setMaximumSize(new Dimension(200, 20));
-        ipSelection.setBorder(null);
-
-        //color ip selection
-        ipSelection.setBackground(ChessPanel.LIGHT_COLOR);
-        ipSelection.setForeground(ChessPanel.MOVE_COLOR);
-        ipSelection.setSelectionColor(ChessPanel.MOVE_COLOR);
-        ipSelection.setSelectedTextColor(ChessPanel.LIGHT_COLOR);
-
-        this.add(ipSelection);
+        addIpSelection();
 
         addJoinButton();
+
+        infoLabel = new JLabel("", SwingUtilities.CENTER);
+        infoLabel.setFont(new Font("Serif", Font.ITALIC, 16));
+        this.add(infoLabel);
     }
 
+    /* stating methods */
+    public void startServer(){
+        new ServerStarter(4891).start();
+    }
+
+    public void joinServer(String ip){
+        try {
+            new Client(ip, 4891, menuPanel.frame, new Dimension(1000, 800));
+
+        } catch(ConnectException e){
+            infoLabel.setText("Connection failed!");
+        }
+    }
+
+    /* adding component methods */
     public void addLabel(String text) {
         JLabel label = new JLabel(text, SwingUtilities.CENTER);
         label.setFont(new Font("Serif", Font.ITALIC, 18));
@@ -70,7 +80,8 @@ public class ServerPanel extends JPanel {
             @Override
             public void clickAction(MouseEvent e){
                 AudioPlayer.playSound("res/sounds/click1.wav");
-                System.out.println("server start clicked");
+                startServer();
+                joinServer("localhost");
             }
         };
         this.add(serverButton);
@@ -81,16 +92,20 @@ public class ServerPanel extends JPanel {
             @Override
             public void clickAction(MouseEvent e){
                 AudioPlayer.playSound("res/sounds/click1.wav");
-
-                //setting up game
-                Board board = new Board();
-                board.readPosition(new File("save/startPosition/defaultPosition.json"));
-
-                Client client = new Client(board, "localhost", 4891); //Todo ip selection
-
-                new ChessPanel(menuPanel.frame, client, new Dimension(1000, 800), board, Team.White);
+                joinServer(ipSelection.getText());
             }
         };
         this.add(serverButton);
+    }
+
+    public void addIpSelection(){
+        ipSelection = new HintTextField("Enter Ip here"){
+            @Override
+            public void enterPressed(){
+                AudioPlayer.playSound("res/sounds/enter.wav");
+                joinServer(ipSelection.getText());
+            }
+        };
+        this.add(ipSelection);
     }
 }

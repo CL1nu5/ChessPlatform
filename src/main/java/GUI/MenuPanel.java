@@ -1,6 +1,6 @@
 package GUI;
 
-import GUI.SubObjects.SelectionPanel;
+import GUI.SubPanels.SelectionPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +18,7 @@ public class MenuPanel extends JPanel {
 
     public MenuPanel(Frame frame) {
         this.frame = frame;
+        this.frame.setResizable(false);
 
         this.setPreferredSize(displaySize);
         this.setLayout(null);
