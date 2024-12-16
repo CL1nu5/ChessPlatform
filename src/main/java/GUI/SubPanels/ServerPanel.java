@@ -17,7 +17,7 @@ import java.net.ConnectException;
 
 public class ServerPanel extends JPanel{
 
-    MenuPanel menuPanel;
+    private final MenuPanel menuPanel;
 
     private RoundButton serverButton, joinButton;
     private HintTextField ipSelection;

@@ -13,7 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class ChessPanel extends JPanel implements MouseListener, MouseMotionListener, ComponentListener {
+public abstract class ChessPanel extends JPanel implements MouseListener, MouseMotionListener, ComponentListener {
     //Constants
     public static final Color LIGHT_COLOR = new Color(216, 243, 220);
     public static final Color DARK_COLOR = new Color(149, 213, 178);
@@ -25,20 +25,16 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
     public static final Color CAPTURE_MOVE_COLOR = new Color(27, 67, 50);
 
     //JObjects
-    private Dimension displaySize;
-    private Point mousePos;
+    protected Dimension displaySize;
+    protected Point mousePos;
 
     //GameObjects
     public Board chessBoard;
-    private Team direction;
-    private Piece selectedPiece, grabbedPiece;
+    protected Team direction;
+    protected Piece selectedPiece, grabbedPiece;
 
-    //communication
-    private final Client client;
-
-    public ChessPanel(Frame frame, Client client, Dimension displaySize, Board chessBoard, Team direction) {
+    public ChessPanel(Frame frame, Dimension displaySize, Board chessBoard, Team direction) {
         this.chessBoard = chessBoard;
-        this.client = client;
         this.direction = direction;
         this.displaySize = displaySize;
 
@@ -53,6 +49,12 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
         frame.switchPanel(this);
     }
 
+    /* action methods */
+
+    protected abstract void pressed(Piece piece);
+
+    protected abstract void execute(Move move);
+
     /* mouse listener methods - needed */
     @Override
     public void mousePressed(MouseEvent e) {
@@ -65,9 +67,8 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
         }
 
         Piece piece = chessBoard.getPiece(fieldPos);
-        if (piece != null && piece.team.isInSameTeam(chessBoard.activePlayer)){
-            selectedPiece = piece;
-            grabbedPiece = piece;
+        if (piece != null){
+            pressed(piece);
         }
 
         repaint();
@@ -89,9 +90,9 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
             return;
         }
 
-        for (Move move : client.getMoves(selectedPiece)){
+        for (Move move : selectedPiece.getMoves()){
             if (fieldPos.equals(move.postponedPosition)){
-                client.executeMove(move);
+                execute(move);
             }
         }
 
@@ -167,7 +168,7 @@ public class ChessPanel extends JPanel implements MouseListener, MouseMotionList
         DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
         paintField(g, sizes, selectedPiece.currentPosition, SELECTED_PIECE_COLOR);
 
-        for (Move move : client.getMoves(selectedPiece)) {
+        for (Move move : selectedPiece.getMoves()) {
             if (move.isCaptureMove()) {
                 paintField(g, sizes, move.postponedPosition, CAPTURE_MOVE_COLOR);
             } else {
