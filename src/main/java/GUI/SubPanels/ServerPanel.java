@@ -17,7 +17,7 @@ import java.net.ConnectException;
 
 public class ServerPanel extends JPanel{
 
-    MenuPanel menuPanel;
+    private final MenuPanel menuPanel;
 
     private RoundButton serverButton, joinButton;
     private HintTextField ipSelection;
@@ -88,7 +88,7 @@ public class ServerPanel extends JPanel{
     }
 
     public void addJoinButton(){
-        serverButton = new RoundButton(0.4, "start"){
+        serverButton = new RoundButton(0.4, "join"){
             @Override
             public void clickAction(MouseEvent e){
                 AudioPlayer.playSound("res/sounds/click1.wav");

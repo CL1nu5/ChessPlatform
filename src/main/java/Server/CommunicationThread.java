@@ -2,7 +2,7 @@ package Server;
 
 import Client.Transmitter;
 
-public class CommunicationThread extends Thread {
+public class CommunicationThread {
     private Server server;
     public Transmitter transmitter;
 
@@ -10,9 +10,4 @@ public class CommunicationThread extends Thread {
         this.server = server;
         this.transmitter = transmitter;
     }
-
-    public void run(){
-
-    }
-
 }

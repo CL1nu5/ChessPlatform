@@ -1,19 +1,32 @@
 package GUI.SubPanels;
 
+import ChessObjects.Board;
+import ChessObjects.PieceTypes.Team;
 import GUI.ChessPanel;
+import GUI.ChessPanels.LocalChessPanel;
+import GUI.MenuPanel;
 import GUI.Utilities.RoundButton;
+import GUI.Utilities.Slider;
 import Support.AudioPlayer;
+import Support.FileEditor;
+
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 public class LocalPanel extends JPanel {
 
-    RoundButton localButton;
-    RoundButton botButton;
+    private final MenuPanel menuPanel;
 
-    public LocalPanel(){
+    private RoundButton localButton;
+    private RoundButton botButton;
+    private Slider slider;
+
+    public LocalPanel(MenuPanel menuPanel){
+        this.menuPanel = menuPanel;
+
         this.setBackground(ChessPanel.LIGHT_COLOR);
         this.setLayout(new GridLayout(10, 1));
 
@@ -23,6 +36,8 @@ public class LocalPanel extends JPanel {
         //adding components
         addLabel("Local:");
         addLabel("playing a game of chess against your friends or by yourself on one device");
+        slider = new Slider(0, "stays", "turns");
+        this.add(slider);
         addLocalButton();
 
         //add separation
@@ -46,7 +61,15 @@ public class LocalPanel extends JPanel {
             @Override
             public void clickAction(MouseEvent e){
                 AudioPlayer.playSound("res/sounds/click1.wav");
-                System.out.println("local clicked");
+
+                Board board = new Board();
+
+                FileEditor fileEditor = new FileEditor();
+                board.setPositionByString(fileEditor.read(new File("save/startPosition/defaultPosition.json")));
+
+                boolean turns = slider.getSelection() == 1;
+
+                new LocalChessPanel(menuPanel.frame, new Dimension(1000, 800), board, Team.White, turns);
             }
         };
         this.add(localButton);

@@ -25,7 +25,7 @@ public class OptionPanel extends JPanel {
         addButton();
 
         //crate panels
-        localPanel = new LocalPanel();
+        localPanel = new LocalPanel(menuPanel);
         serverPanel = new ServerPanel(menuPanel);
 
         //set selection

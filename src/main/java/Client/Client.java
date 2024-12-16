@@ -5,6 +5,7 @@ import ChessObjects.Move;
 import ChessObjects.Piece;
 import ChessObjects.PieceTypes.Team;
 import GUI.ChessPanel;
+import GUI.ChessPanels.RemoteChessPanel;
 import GUI.Frame;
 import Support.StringEditor;
 
@@ -44,7 +45,7 @@ public class Client extends Thread{
 
         //starting panel
         frame.setResizable(true);
-        panel = new ChessPanel(frame, this, displaySize, chessBord, team);
+        panel = new RemoteChessPanel(frame, displaySize, chessBord, team, this);
 
         //getting command
         start();
@@ -61,10 +62,6 @@ public class Client extends Thread{
         board.setPositionByString(transmitter.receiveMessage());
 
         return board;
-    }
-
-    public ArrayList<Move> getMoves(Piece piece){
-        return piece.getMoves();
     }
 
     public boolean executeMove(Move move){
