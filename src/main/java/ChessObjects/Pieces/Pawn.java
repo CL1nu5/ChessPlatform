@@ -8,6 +8,7 @@ import ChessObjects.PieceTypes.Team;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Queue;
 
 public class Pawn extends Piece {
 
@@ -35,6 +36,12 @@ public class Pawn extends Piece {
 
         if (checkout(forwardPosition) == 0) {
             moves.add(new Move(this, forwardPosition));
+
+            //check if the move promotes
+            if (board.isEnemyBackRank(team, forwardPosition)){
+                promotion(moves);
+            }
+
             return true;
         }
 
@@ -59,6 +66,11 @@ public class Pawn extends Piece {
 
             if (checkout(capturePosition) == -1) {
                 moves.add(new Move(this, board.getPiece(capturePosition), capturePosition, null));
+
+                //check if the capture promotes
+                if (board.isEnemyBackRank(team, capturePosition)){
+                    promotion(moves);
+                }
             }
         }
     }
@@ -97,5 +109,13 @@ public class Pawn extends Piece {
                 moves.add(new Move(this, enemy, getCheckoutPosition(dir[1], 1), null));
             }
         }
+    }
+
+    //when a pawn reaches the back rank of the enemy it can promote to a better piece
+    public void promotion(ArrayList<Move> moves){
+        Move move = moves.getLast();
+        Queen queen = new Queen(move.postponedPosition, team, board);
+
+        move.connectedMove = new Move(queen, this, queen.currentPosition, null);
     }
 }

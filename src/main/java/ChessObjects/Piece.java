@@ -130,9 +130,11 @@ public abstract class Piece implements Cloneable {
 
     //relocates
     public boolean setPosition(Point newPosition) {
-        //check if position is inside board and position is occupied
+        //check if position is inside board and position is occupied by enemy
         if (board.isOccupied(newPosition)) {
-            return false;
+            if (!board.getPiece(newPosition).team.isInSameTeam(team)){
+                return false;
+            }
         }
 
         //changing the board postion of the piece
