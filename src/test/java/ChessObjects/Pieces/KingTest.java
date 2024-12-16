@@ -95,4 +95,22 @@ public class KingTest extends TestCase {
         board.executeMove(new Move(rook, new Point(0, 7)));
         assertEquals(5, king.getPossibleMoves().size());
     }
+
+    public void testCastleWithBlackPieces(){
+        Board board = new Board();
+        King king = new King(new Point(4,0), Team.Black, board);
+        king.placeOnBoard();
+
+        //status before castle is possible
+        assertEquals(5, king.getPossibleMoves().size());
+
+        Rook rook = new Rook(new Point(0, 0), Team.Black, board);
+        rook.placeOnBoard();
+        assertEquals(6, king.getPossibleMoves().size());
+
+        //check if piece is standing in between
+        Pawn pawn = new Pawn(new Point(1, 0), Team.Black, board);
+        pawn.placeOnBoard();
+        assertEquals(5, king.getPossibleMoves().size());
+    }
 }

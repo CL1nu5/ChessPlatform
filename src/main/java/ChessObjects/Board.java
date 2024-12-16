@@ -135,6 +135,13 @@ public class Board implements Cloneable{
         return pieces[position.y][position.x];
     }
 
+    public boolean isEnemyBackRank(Team team, Point pos){
+        if (team.value == 1){
+            return pos.y == 0;
+        }
+        return pos.y == pieces.length - 1;
+    }
+
     public Move getLastMove() {
         if (previousMoves.isEmpty()) {
             return null;

@@ -41,16 +41,21 @@ public class King extends Piece {
 
 
         for (Move capture : captures){
-            if (capture.capturedPiece instanceof Rook){
+            if (capture.capturedPiece instanceof Rook rook){
                 //rooks to perform castle with
-                Rook rook = (Rook) capture.capturedPiece;
 
                 //check that rook hasn't performed any moves before
                 if (!rook.getPreviousMoves().isEmpty())
                     continue;
 
-                //check if king is moving through check
+                //getting the direction
                 Direction dir = Direction.getDirectionByDistance(currentPosition, rook.currentPosition);
+                if (team.isInSameTeam(Team.Black)){
+                    assert dir != null;
+                    dir = dir.getOpposite();
+                }
+
+                //check if king is moving through check
                 Move move = new Move(this, getCheckoutPosition(dir, 1));
                 if (move.isIllegalMove()){
                     continue;
