@@ -112,6 +112,5 @@ public class KingTest extends TestCase {
         Pawn pawn = new Pawn(new Point(1, 0), Team.Black, board);
         pawn.placeOnBoard();
         assertEquals(5, king.getPossibleMoves().size());
-
     }
 }

@@ -49,13 +49,10 @@ public class King extends Piece {
                     continue;
 
                 //getting the direction
-                Direction dir;
-
-                if (team.isInSameTeam(Team.White)){
-                     dir = Direction.getDirectionByDistance(currentPosition, rook.currentPosition);
-                }
-                else {
-                    dir = Direction.getDirectionByDistance(rook.currentPosition, currentPosition);
+                Direction dir = Direction.getDirectionByDistance(currentPosition, rook.currentPosition);
+                if (team.isInSameTeam(Team.Black)){
+                    assert dir != null;
+                    dir = dir.getOpposite();
                 }
 
                 //check if king is moving through check
