@@ -70,6 +70,7 @@ public class LocalPanel extends JPanel {
                 boolean turns = slider.getSelection() == 1;
 
                 new LocalChessPanel(menuPanel.frame, new Dimension(1000, 800), board, Team.White, turns);
+                menuPanel.frame.setResizable(true);
             }
         };
         this.add(localButton);

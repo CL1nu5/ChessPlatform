@@ -33,10 +33,16 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
     protected Team direction;
     protected Piece selectedPiece, grabbedPiece;
 
+    //states
+    public boolean gameOver;
+    protected Team winner;
+
     public ChessPanel(Frame frame, Dimension displaySize, Board chessBoard, Team direction) {
         this.chessBoard = chessBoard;
         this.direction = direction;
         this.displaySize = displaySize;
+        this.gameOver = false;
+        this.winner = null;
 
         this.setPreferredSize(displaySize);
         this.setOpaque(true);
@@ -55,9 +61,24 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
 
     protected abstract void execute(Move move);
 
+    //returns the winner if there is one, esle returns null. it also blockades any inputs if the game is over
+    protected Team isGameOver(){
+        if (chessBoard.getMoves().isEmpty()){
+            gameOver = true;
+            return chessBoard.activePlayer.getOpposite();
+        }
+
+        return null;
+    }
+
     /* mouse listener methods - needed */
     @Override
     public void mousePressed(MouseEvent e) {
+        //won't react, if the game is over
+        if (gameOver){
+            return;
+        }
+
         DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
         mousePos = e.getPoint();
 
@@ -76,6 +97,11 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        //won't react, if the game is over
+        if (gameOver){
+            return;
+        }
+
         DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
         mousePos = e.getPoint();
 
@@ -102,6 +128,11 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        //won't react, if the game is over
+        if (gameOver){
+            return;
+        }
+
         mousePos = e.getPoint();
         repaint();
     }
@@ -114,6 +145,10 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
         paintBoard(g2d);
         paintSelection(g2d);
         paintPieces(g2d);
+
+        if (gameOver) {
+            paintGameOver(g2d);
+        }
     }
 
     //painting gameObjects in correct drawing order
@@ -144,7 +179,7 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
         //character setup
         Font font = new Font("Serif", Font.PLAIN, 40);
         g.setFont(font);
-        Dimension stringSize = StringEditor.getStringSize(" ", font);
+        Dimension stringSize = StringEditor.getStringSize("8", font);
 
         for (PointComparator pc : sizes.getRimPositions()) {
             //paint rim square
@@ -231,6 +266,8 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
                 "res/ChessPieces/" + piece.team + "/" + piece.getClass().getSimpleName() + ".png").getImage();
         g.drawImage(pieceImage, bounds.x, bounds.y, bounds.width, bounds.height, null);
     }
+
+    protected abstract void paintGameOver(Graphics2D g);
 
     /* adapting to frame changes */
     @Override

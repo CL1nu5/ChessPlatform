@@ -31,4 +31,9 @@ public class RemoteChessPanel extends ChessPanel {
     protected void execute(Move move) {
         client.executeMove(move);
     }
+
+    @Override
+    protected void paintGameOver(Graphics2D g) {
+        //todo
+    }
 }

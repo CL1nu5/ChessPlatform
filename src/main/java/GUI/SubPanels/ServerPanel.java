@@ -1,18 +1,14 @@
 package GUI.SubPanels;
 
-import ChessObjects.Board;
 import Client.Client;
-import GUI.ChessPanel;
-import GUI.MenuPanel;
-import GUI.Utilities.HintTextField;
-import GUI.Utilities.RoundButton;
-import GUI.Utilities.ServerStarter;
+
+import GUI.*;
+import GUI.Utilities.*;
 import Support.AudioPlayer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.net.ConnectException;
 
 public class ServerPanel extends JPanel{
@@ -21,7 +17,7 @@ public class ServerPanel extends JPanel{
 
     private RoundButton serverButton, joinButton;
     private HintTextField ipSelection;
-    private JLabel infoLabel;
+    private final JLabel infoLabel;
 
     public ServerPanel(MenuPanel menuPanel){
         this.menuPanel = menuPanel;
@@ -60,7 +56,7 @@ public class ServerPanel extends JPanel{
 
     public void joinServer(String ip){
         try {
-            new Client(ip, 4891, menuPanel.frame, new Dimension(1000, 800));
+            new Client(ip, 4891, menuPanel.frame, new Dimension(1000, 800)).start();
 
         } catch(ConnectException e){
             infoLabel.setText("Connection failed!");
@@ -88,14 +84,14 @@ public class ServerPanel extends JPanel{
     }
 
     public void addJoinButton(){
-        serverButton = new RoundButton(0.4, "join"){
+        joinButton = new RoundButton(0.4, "join"){
             @Override
             public void clickAction(MouseEvent e){
                 AudioPlayer.playSound("res/sounds/click1.wav");
                 joinServer(ipSelection.getText());
             }
         };
-        this.add(serverButton);
+        this.add(joinButton);
     }
 
     public void addIpSelection(){
