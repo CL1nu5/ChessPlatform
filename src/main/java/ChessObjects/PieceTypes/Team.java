@@ -32,6 +32,13 @@ public enum Team{
         return Team.White;
     }
 
+    public static Team getTeamViaValue(int value){
+        if (value == Team.White.value){
+            return Team.White;
+        }
+        return Team.Black;
+    }
+
     public static Team getTeamViaJson(String json){
         int index = 0;
         char current;

@@ -32,7 +32,11 @@ public class LocalChessPanel extends ChessPanel {
     protected void execute(Move move) {
         chessBoard.executeMove(move);
 
-        winner = isGameOver();
+        int gameState = isGameOver();
+
+        if (gameState != 0 && gameState != 2){
+            winner = Team.getTeamViaValue(gameState);
+        }
 
         if (turns){
             direction = direction.getOpposite();
@@ -53,7 +57,15 @@ public class LocalChessPanel extends ChessPanel {
 
         g.setColor(ChessPanel.LIGHT_COLOR);
         g.setFont(new Font("Serif", Font.PLAIN, 50));
-        String text = "Game over! Team: " + winner.string + " has won";
+        String text = "Game over! ";
+
+        if (winner != null){
+            text += "Team: " + winner.string + " has won";
+        }
+        else {
+            text += "remis - draw";
+        }
+
         Dimension stringSize = StringEditor.getStringSize(text, g.getFont());
 
         g.drawString(text, (size.width - stringSize.width) / 2, start.y + size.height - (size.height - stringSize.height) / 2);

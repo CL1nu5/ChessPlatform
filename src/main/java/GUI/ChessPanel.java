@@ -61,14 +61,24 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
 
     protected abstract void execute(Move move);
 
-    //returns the winner if there is one, esle returns null. it also blockades any inputs if the game is over
-    protected Team isGameOver(){
-        if (chessBoard.getMoves().isEmpty()){
-            gameOver = true;
-            return chessBoard.activePlayer.getOpposite();
+    //returns: 0 no winner, 2 remis, -1 black wins, 1 white wins
+    protected int isGameOver(){
+        if (!chessBoard.getMoves().isEmpty()){
+            return 0;
         }
 
-        return null;
+        gameOver = true;
+
+        //checks if enemy is checking
+        chessBoard.switchTeam();
+        for (Move move: chessBoard.getMoves()){
+            if (move.isKingCaptured()){
+                chessBoard.switchTeam();
+                return chessBoard.activePlayer.getOpposite().value;
+            }
+        }
+
+        return 2;
     }
 
     /* mouse listener methods - needed */
