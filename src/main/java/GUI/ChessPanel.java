@@ -25,6 +25,7 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
     public static final Color CAPTURE_MOVE_COLOR = new Color(27, 67, 50);
 
     //JObjects
+    protected Frame frame;
     protected Dimension displaySize;
     protected Point mousePos;
 
@@ -38,6 +39,7 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
     protected Team winner;
 
     public ChessPanel(Frame frame, Dimension displaySize, Board chessBoard, Team direction) {
+        this.frame = frame;
         this.chessBoard = chessBoard;
         this.direction = direction;
         this.displaySize = displaySize;
@@ -107,6 +109,7 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
     public void mouseReleased(MouseEvent e) {
         //won't react, if the game is over
         if (gameOver){
+            new MenuPanel(frame);
             return;
         }
 
