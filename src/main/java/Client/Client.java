@@ -116,7 +116,10 @@ public class Client extends Thread{
                 case "+enemy-move+" -> {
                     ArrayList<String> message = transmitter.receiveMessage();
                     String json = StringEditor.turnJsonListIntoString(message);
+
                     chessBord.executeMove(new Move(json, chessBord));
+                    panel.checkGameOver();
+
                     panel.repaint();
                 }
 

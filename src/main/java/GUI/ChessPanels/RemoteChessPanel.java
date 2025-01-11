@@ -30,10 +30,25 @@ public class RemoteChessPanel extends ChessPanel {
 
     protected void execute(Move move) {
         client.executeMove(move);
+        checkGameOver();
     }
 
     @Override
     protected void paintGameOver(Graphics2D g) {
-        //todo
+        String text = "Game over! ";
+
+        if (winner != null){
+            if (winner.isInSameTeam(direction)){
+                text += "You have WON :)";
+            }
+            else {
+                text += "You have LOST :(";
+            }
+        }
+        else {
+            text += "remis - draw";
+        }
+
+        paintGameOver(g, text);
     }
 }

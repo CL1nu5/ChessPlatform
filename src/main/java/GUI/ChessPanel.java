@@ -62,9 +62,9 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
     protected abstract void execute(Move move);
 
     //returns: 0 no winner, 2 remis, -1 black wins, 1 white wins
-    protected int isGameOver(){
+    public void checkGameOver(){
         if (!chessBoard.getMoves().isEmpty()){
-            return 0;
+            return;
         }
 
         gameOver = true;
@@ -74,11 +74,9 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
         for (Move move: chessBoard.getMoves()){
             if (move.isKingCaptured()){
                 chessBoard.switchTeam();
-                return chessBoard.activePlayer.getOpposite().value;
+                winner = chessBoard.activePlayer.getOpposite();
             }
         }
-
-        return 2;
     }
 
     /* mouse listener methods - needed */
@@ -278,6 +276,26 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
     }
 
     protected abstract void paintGameOver(Graphics2D g);
+
+
+    protected void paintGameOver(Graphics2D g, String text) {
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
+
+        Point start = sizes.getRealPositionOfSquare(new Point(0, 4));
+        Point end = sizes.getRealPositionOfSquare(new Point(10, 6));
+
+        Dimension size = new Dimension(displaySize.width, end.y - start.y);
+
+        g.setColor(ChessPanel.MOVE_COLOR);
+        g.fillRect(0, start.y, size.width, size.height);
+
+        g.setColor(ChessPanel.LIGHT_COLOR);
+        g.setFont(new Font("Serif", Font.PLAIN, 50));
+
+        Dimension stringSize = StringEditor.getStringSize(text, g.getFont());
+
+        g.drawString(text, (size.width - stringSize.width) / 2, start.y + size.height - (size.height - stringSize.height) / 2);
+    }
 
     /* adapting to frame changes */
     @Override
