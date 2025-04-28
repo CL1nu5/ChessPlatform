@@ -4,8 +4,10 @@ import ChessObjects.Board;
 import ChessObjects.Move;
 import ChessObjects.Piece;
 import ChessObjects.PieceTypes.Team;
+import DataObjects.DisplayBoard;
 import GUI.ChessPanel;
 import GUI.Frame;
+import Support.StringEditor;
 
 import java.awt.*;
 
@@ -30,8 +32,24 @@ public class LocalChessPanel extends ChessPanel {
     protected void execute(Move move) {
         chessBoard.executeMove(move);
 
+        checkGameOver();
+
         if (turns){
             direction = direction.getOpposite();
         }
+    }
+
+    @Override
+    protected void paintGameOver(Graphics2D g) {
+        String text = "Game over! ";
+
+        if (winner != null){
+            text += "Team: " + winner.string + " has won";
+        }
+        else {
+            text += "remis - draw";
+        }
+
+        paintGameOver(g, text);
     }
 }

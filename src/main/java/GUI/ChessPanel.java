@@ -25,6 +25,7 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
     public static final Color CAPTURE_MOVE_COLOR = new Color(27, 67, 50);
 
     //JObjects
+    protected Frame frame;
     protected Dimension displaySize;
     protected Point mousePos;
 
@@ -33,10 +34,17 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
     protected Team direction;
     protected Piece selectedPiece, grabbedPiece;
 
+    //states
+    public boolean gameOver;
+    protected Team winner;
+
     public ChessPanel(Frame frame, Dimension displaySize, Board chessBoard, Team direction) {
+        this.frame = frame;
         this.chessBoard = chessBoard;
         this.direction = direction;
         this.displaySize = displaySize;
+        this.gameOver = false;
+        this.winner = null;
 
         this.setPreferredSize(displaySize);
         this.setOpaque(true);
@@ -55,9 +63,32 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
 
     protected abstract void execute(Move move);
 
+    //returns: 0 no winner, 2 remis, -1 black wins, 1 white wins
+    public void checkGameOver(){
+        if (!chessBoard.getMoves().isEmpty()){
+            return;
+        }
+
+        gameOver = true;
+
+        //checks if enemy is checking
+        chessBoard.switchTeam();
+        for (Move move: chessBoard.getMoves()){
+            if (move.isKingCaptured()){
+                chessBoard.switchTeam();
+                winner = chessBoard.activePlayer.getOpposite();
+            }
+        }
+    }
+
     /* mouse listener methods - needed */
     @Override
     public void mousePressed(MouseEvent e) {
+        //won't react, if the game is over
+        if (gameOver){
+            return;
+        }
+
         DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
         mousePos = e.getPoint();
 
@@ -76,6 +107,12 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        //won't react, if the game is over
+        if (gameOver){
+            new MenuPanel(frame);
+            return;
+        }
+
         DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
         mousePos = e.getPoint();
 
@@ -102,6 +139,11 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        //won't react, if the game is over
+        if (gameOver){
+            return;
+        }
+
         mousePos = e.getPoint();
         repaint();
     }
@@ -114,6 +156,10 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
         paintBoard(g2d);
         paintSelection(g2d);
         paintPieces(g2d);
+
+        if (gameOver) {
+            paintGameOver(g2d);
+        }
     }
 
     //painting gameObjects in correct drawing order
@@ -144,7 +190,7 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
         //character setup
         Font font = new Font("Serif", Font.PLAIN, 40);
         g.setFont(font);
-        Dimension stringSize = StringEditor.getStringSize(" ", font);
+        Dimension stringSize = StringEditor.getStringSize("8", font);
 
         for (PointComparator pc : sizes.getRimPositions()) {
             //paint rim square
@@ -230,6 +276,28 @@ public abstract class ChessPanel extends JPanel implements MouseListener, MouseM
         Image pieceImage = new ImageIcon(
                 "res/ChessPieces/" + piece.team + "/" + piece.getClass().getSimpleName() + ".png").getImage();
         g.drawImage(pieceImage, bounds.x, bounds.y, bounds.width, bounds.height, null);
+    }
+
+    protected abstract void paintGameOver(Graphics2D g);
+
+
+    protected void paintGameOver(Graphics2D g, String text) {
+        DisplayBoard sizes = new DisplayBoard(displaySize, 10); // 10 = 8 * field + 2 * rim
+
+        Point start = sizes.getRealPositionOfSquare(new Point(0, 4));
+        Point end = sizes.getRealPositionOfSquare(new Point(10, 6));
+
+        Dimension size = new Dimension(displaySize.width, end.y - start.y);
+
+        g.setColor(ChessPanel.MOVE_COLOR);
+        g.fillRect(0, start.y, size.width, size.height);
+
+        g.setColor(ChessPanel.LIGHT_COLOR);
+        g.setFont(new Font("Serif", Font.PLAIN, 50));
+
+        Dimension stringSize = StringEditor.getStringSize(text, g.getFont());
+
+        g.drawString(text, (size.width - stringSize.width) / 2, start.y + size.height - (size.height - stringSize.height) / 2);
     }
 
     /* adapting to frame changes */
