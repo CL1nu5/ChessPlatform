@@ -1,4 +1,4 @@
-# ChessObjects.Chess Projekt &nbsp; [![Unit Tests](https://github.com/CL1nu5/ChessPlatform/actions/workflows/automatedUnitTests.yml/badge.svg)](https://github.com/CL1nu5/ChessPlatform/actions/workflows/automatedUnitTests.yml)
+# ChessObjects.shjgdfb.java.Chess Projekt &nbsp; [![Unit Tests](https://github.com/CL1nu5/ChessPlatform/actions/workflows/automatedUnitTests.yml/badge.svg)](https://github.com/CL1nu5/ChessPlatform/actions/workflows/automatedUnitTests.yml)
 
 This is a little chess projekt I work on myself. 
 In the future it should include everything needed to play a game of chess local against your friends. 
@@ -6,9 +6,9 @@ In the future I may add a chess-bot to play against, or even an online mode.
 
 ## How to play it?
 - To play  players need to execute the main client:
-  [mainClient.java](src/main/java/Main/MainClient.java)
+  [mainClient.java](src/shjgdfb/java/Main/MainClient.java)
 - Starting this class opens the menu window, where you can select between the different game modes and settings:
-  ![menu-panel](res/ReadMe/menu-panel.png)
+  ![menu-panel](resources/ReadMe/menu-panel.png)
 
 ### playing a game by yourself
 - under the point "play local - bot, select if you want the board to turn after each move (with the slider)"
@@ -28,4 +28,4 @@ In the future I may add a chess-bot to play against, or even an online mode.
   
 ## Overview
 This is how the game looks like: \
-![chess-board](res/ReadMe/chess-board.png)
+![chess-board](resources/ReadMe/chess-board.png)
